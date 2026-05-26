@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "technitium_dns_mcp": {
+      "command": "python",
+      "args": [
+        "-m",
+        "technitium_dns_mcp.mcp_server"
+      ],
+      "env": {}
+    }
+  }
+}

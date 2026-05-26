@@ -1,0 +1,12 @@
+services:
+  technitium-dns-mcp:
+    build: .
+    environment:
+      - TECHNITIUM_DNS_URL
+      - TECHNITIUM_DNS_TOKEN
+      - TECHNITIUM_DNS_SSL_VERIFY
+      - TRANSPORT=streamable-http
+      - HOST=0.0.0.0
+      - PORT=8000
+    ports:
+      - "8000:8000"
