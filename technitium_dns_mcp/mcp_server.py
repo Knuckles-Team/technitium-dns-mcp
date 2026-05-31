@@ -1,21 +1,19 @@
 """Main FastMCP server and tool registration."""
 
-import os
 import sys
 from typing import Any
 
-from agent_utilities.base_utilities import to_boolean
 from agent_utilities.mcp_utilities import create_mcp_server
 from dotenv import find_dotenv, load_dotenv
 from fastmcp.utilities.logging import get_logger
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from technitium_dns_mcp.mcp.mcp_user import register_user_tools
 from technitium_dns_mcp.mcp.mcp_dashboard import register_dashboard_tools
+from technitium_dns_mcp.mcp.mcp_user import register_user_tools
 from technitium_dns_mcp.mcp.mcp_zones import register_zones_tools
 
-__version__ = "0.15.0"
+__version__ = "0.24.0"
 logger = get_logger(name="technitium_dns_mcp")
 
 

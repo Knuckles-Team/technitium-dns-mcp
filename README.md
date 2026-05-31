@@ -90,3 +90,5 @@ Ensure high reliability across all components with standard test suites:
 ```bash
 pytest -v tests/
 ```
+
+Version: 0.24.0

@@ -120,4 +120,3 @@ pytest -v
 - Use `~/workspace/scratch/` for temporary scripts and experiments
 - Use `~/workspace/reports/` for command output and reports
 - Keep test scripts in the `tests/` directory following proper pytest conventions
-

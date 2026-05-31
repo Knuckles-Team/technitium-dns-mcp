@@ -1,6 +1,7 @@
 """MCP tools for Technitium DNS Dashboard metrics & analytics operations."""
 
 from typing import Any
+
 from fastmcp import Context, FastMCP
 from fastmcp.dependencies import Depends
 from pydantic import Field
