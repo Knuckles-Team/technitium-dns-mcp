@@ -162,7 +162,9 @@ class ApiClientZones(ApiClientBase):
             params["node"] = node
         return self.request("GET", "/api/zones/export", params=params)
 
-    def clone_zone(self, zone: str, source_zone: str, node: str | None = None) -> dict[str, Any]:
+    def clone_zone(
+        self, zone: str, source_zone: str, node: str | None = None
+    ) -> dict[str, Any]:
         """Clones a zone from an existing local zone.
 
         Args:
@@ -175,7 +177,9 @@ class ApiClientZones(ApiClientBase):
             data["node"] = node
         return self.request("POST", "/api/zones/clone", data=data)
 
-    def convert_zone_type(self, zone: str, type: str, node: str | None = None) -> dict[str, Any]:
+    def convert_zone_type(
+        self, zone: str, type: str, node: str | None = None
+    ) -> dict[str, Any]:
         """Converts zone type.
 
         Args:
@@ -255,9 +259,13 @@ class ApiClientZones(ApiClientBase):
         if node is not None:
             params["node"] = node
         if include_available_catalog_zone_names is not None:
-            params["includeAvailableCatalogZoneNames"] = str(include_available_catalog_zone_names).lower()
+            params["includeAvailableCatalogZoneNames"] = str(
+                include_available_catalog_zone_names
+            ).lower()
         if include_available_tsig_key_names is not None:
-            params["includeAvailableTsigKeyNames"] = str(include_available_tsig_key_names).lower()
+            params["includeAvailableTsigKeyNames"] = str(
+                include_available_tsig_key_names
+            ).lower()
         return self.request("GET", "/api/zones/options/get", params=params)
 
     def set_zone_options(
@@ -294,9 +302,13 @@ class ApiClientZones(ApiClientBase):
         if catalog is not None:
             data["catalog"] = catalog
         if override_catalog_query_access is not None:
-            data["overrideCatalogQueryAccess"] = str(override_catalog_query_access).lower()
+            data["overrideCatalogQueryAccess"] = str(
+                override_catalog_query_access
+            ).lower()
         if override_catalog_zone_transfer is not None:
-            data["overrideCatalogZoneTransfer"] = str(override_catalog_zone_transfer).lower()
+            data["overrideCatalogZoneTransfer"] = str(
+                override_catalog_zone_transfer
+            ).lower()
         if override_catalog_notify is not None:
             data["overrideCatalogNotify"] = str(override_catalog_notify).lower()
         if primary_name_server_addresses is not None:
@@ -322,7 +334,9 @@ class ApiClientZones(ApiClientBase):
         if notify_name_servers is not None:
             data["notifyNameServers"] = notify_name_servers
         if notify_secondary_catalogs_name_servers is not None:
-            data["notifySecondaryCatalogsNameServers"] = notify_secondary_catalogs_name_servers
+            data["notifySecondaryCatalogsNameServers"] = (
+                notify_secondary_catalogs_name_servers
+            )
         if update is not None:
             data["update"] = update
         if update_network_acl is not None:
@@ -425,7 +439,9 @@ class ApiClientZones(ApiClientBase):
             params["node"] = node
         return self.request("GET", "/api/zones/dnssec/viewDS", params=params)
 
-    def get_dnssec_properties(self, zone: str, node: str | None = None) -> dict[str, Any]:
+    def get_dnssec_properties(
+        self, zone: str, node: str | None = None
+    ) -> dict[str, Any]:
         """Retrieves DNSSEC properties/keys for a zone."""
         params = {"zone": zone}
         if node is not None:
@@ -437,14 +453,18 @@ class ApiClientZones(ApiClientBase):
         data = {"zone": zone}
         if node is not None:
             data["node"] = node
-        return self.request("POST", "/api/zones/dnssec/properties/convertToNSEC", data=data)
+        return self.request(
+            "POST", "/api/zones/dnssec/properties/convertToNSEC", data=data
+        )
 
     def convert_to_nsec3(self, zone: str, node: str | None = None) -> dict[str, Any]:
         """Converts proof of non-existence to NSEC3."""
         data = {"zone": zone}
         if node is not None:
             data["node"] = node
-        return self.request("POST", "/api/zones/dnssec/properties/convertToNSEC3", data=data)
+        return self.request(
+            "POST", "/api/zones/dnssec/properties/convertToNSEC3", data=data
+        )
 
     def update_nsec3_params(
         self,
@@ -454,17 +474,27 @@ class ApiClientZones(ApiClientBase):
         node: str | None = None,
     ) -> dict[str, Any]:
         """Updates NSEC3 parameters."""
-        data = {"zone": zone, "iterations": str(iterations), "saltLength": str(salt_length)}
+        data = {
+            "zone": zone,
+            "iterations": str(iterations),
+            "saltLength": str(salt_length),
+        }
         if node is not None:
             data["node"] = node
-        return self.request("POST", "/api/zones/dnssec/properties/updateNSEC3Params", data=data)
+        return self.request(
+            "POST", "/api/zones/dnssec/properties/updateNSEC3Params", data=data
+        )
 
-    def update_dnskey_ttl(self, zone: str, ttl: int, node: str | None = None) -> dict[str, Any]:
+    def update_dnskey_ttl(
+        self, zone: str, ttl: int, node: str | None = None
+    ) -> dict[str, Any]:
         """Updates DNSKEY TTL."""
         data = {"zone": zone, "ttl": str(ttl)}
         if node is not None:
             data["node"] = node
-        return self.request("POST", "/api/zones/dnssec/properties/updateDnsKeyTtl", data=data)
+        return self.request(
+            "POST", "/api/zones/dnssec/properties/updateDnsKeyTtl", data=data
+        )
 
     def add_private_key(
         self,
@@ -493,42 +523,68 @@ class ApiClientZones(ApiClientBase):
         if curve is not None:
             data["curve"] = curve
 
-        return self.request("POST", "/api/zones/dnssec/properties/addPrivateKey", data=data)
+        return self.request(
+            "POST", "/api/zones/dnssec/properties/addPrivateKey", data=data
+        )
 
-    def update_private_key(self, zone: str, key_tag: int, rollover_days: int, node: str | None = None) -> dict[str, Any]:
+    def update_private_key(
+        self, zone: str, key_tag: int, rollover_days: int, node: str | None = None
+    ) -> dict[str, Any]:
         """Updates private key parameters."""
-        data = {"zone": zone, "keyTag": str(key_tag), "rolloverDays": str(rollover_days)}
+        data = {
+            "zone": zone,
+            "keyTag": str(key_tag),
+            "rolloverDays": str(rollover_days),
+        }
         if node is not None:
             data["node"] = node
-        return self.request("POST", "/api/zones/dnssec/properties/updatePrivateKey", data=data)
+        return self.request(
+            "POST", "/api/zones/dnssec/properties/updatePrivateKey", data=data
+        )
 
-    def delete_private_key(self, zone: str, key_tag: int, node: str | None = None) -> dict[str, Any]:
+    def delete_private_key(
+        self, zone: str, key_tag: int, node: str | None = None
+    ) -> dict[str, Any]:
         """Deletes a private DNSSEC key."""
         data = {"zone": zone, "keyTag": str(key_tag)}
         if node is not None:
             data["node"] = node
-        return self.request("POST", "/api/zones/dnssec/properties/deletePrivateKey", data=data)
+        return self.request(
+            "POST", "/api/zones/dnssec/properties/deletePrivateKey", data=data
+        )
 
-    def publish_all_private_keys(self, zone: str, node: str | None = None) -> dict[str, Any]:
+    def publish_all_private_keys(
+        self, zone: str, node: str | None = None
+    ) -> dict[str, Any]:
         """Publishes all private DNSSEC keys."""
         data = {"zone": zone}
         if node is not None:
             data["node"] = node
-        return self.request("POST", "/api/zones/dnssec/properties/publishAllPrivateKeys", data=data)
+        return self.request(
+            "POST", "/api/zones/dnssec/properties/publishAllPrivateKeys", data=data
+        )
 
-    def rollover_dnskey(self, zone: str, key_tag: int, node: str | None = None) -> dict[str, Any]:
+    def rollover_dnskey(
+        self, zone: str, key_tag: int, node: str | None = None
+    ) -> dict[str, Any]:
         """Rolls over the DNSKEY."""
         data = {"zone": zone, "keyTag": str(key_tag)}
         if node is not None:
             data["node"] = node
-        return self.request("POST", "/api/zones/dnssec/properties/rolloverDnsKey", data=data)
+        return self.request(
+            "POST", "/api/zones/dnssec/properties/rolloverDnsKey", data=data
+        )
 
-    def retire_dnskey(self, zone: str, key_tag: int, node: str | None = None) -> dict[str, Any]:
+    def retire_dnskey(
+        self, zone: str, key_tag: int, node: str | None = None
+    ) -> dict[str, Any]:
         """Retires the DNSKEY."""
         data = {"zone": zone, "keyTag": str(key_tag)}
         if node is not None:
             data["node"] = node
-        return self.request("POST", "/api/zones/dnssec/properties/retireDnsKey", data=data)
+        return self.request(
+            "POST", "/api/zones/dnssec/properties/retireDnsKey", data=data
+        )
 
     def add_record(
         self,

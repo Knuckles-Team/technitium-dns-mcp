@@ -23,7 +23,8 @@ def register_dashboard_tools(mcp: FastMCP):
             )
         ),
         params_json: str = Field(
-            default="{}", description="JSON string of parameters matching the method signature."
+            default="{}",
+            description="JSON string of parameters matching the method signature.",
         ),
         client=Depends(get_client),
         ctx: Context | None = Field(default=None, description="MCP context"),

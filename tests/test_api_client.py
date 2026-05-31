@@ -22,7 +22,9 @@ def test_api_client_user_endpoints():
         assert "/api/sso/status" in kwargs["url"]
 
         # Test login
-        client.login(user="admin", password="password", totp="123456", include_info=True)
+        client.login(
+            user="admin", password="password", totp="123456", include_info=True
+        )
         _, kwargs = mock_request.call_args
         assert kwargs["method"] == "POST"
         assert "/api/user/login" in kwargs["url"]
@@ -32,7 +34,9 @@ def test_api_client_user_endpoints():
         assert kwargs["data"]["includeInfo"] == "true"
 
         # Test create_token
-        client.create_token(user="admin", password="password", token_name="my-token", totp="123456")
+        client.create_token(
+            user="admin", password="password", token_name="my-token", totp="123456"
+        )
         _, kwargs = mock_request.call_args
         assert kwargs["method"] == "POST"
         assert "/api/user/createToken" in kwargs["url"]
@@ -60,7 +64,9 @@ def test_api_client_user_endpoints():
         assert kwargs["data"]["partialToken"] == "part"
 
         # Test change_password
-        client.change_password(password="old", new_password="new", totp="123", iterations=1000)
+        client.change_password(
+            password="old", new_password="new", totp="123", iterations=1000
+        )
         _, kwargs = mock_request.call_args
         assert "/api/user/changePassword" in kwargs["url"]
         assert kwargs["data"]["pass"] == "old"
@@ -89,7 +95,9 @@ def test_api_client_user_endpoints():
         assert "/api/user/profile/get" in kwargs["url"]
 
         # Test set_user_profile_details
-        client.set_user_profile_details(display_name="User", session_timeout_seconds=3600)
+        client.set_user_profile_details(
+            display_name="User", session_timeout_seconds=3600
+        )
         _, kwargs = mock_request.call_args
         assert "/api/user/profile/set" in kwargs["url"]
         assert kwargs["data"]["displayName"] == "User"
@@ -124,7 +132,14 @@ def test_api_client_dashboard_endpoints():
         assert "/api/dashboard/metrics/text" in kwargs["url"]
 
         # Test get_stats
-        client.get_stats(node="node1", stats_type="day", utc=True, dont_trim_query_type_data=False, start="start", end="end")
+        client.get_stats(
+            node="node1",
+            stats_type="day",
+            utc=True,
+            dont_trim_query_type_data=False,
+            start="start",
+            end="end",
+        )
         _, kwargs = mock_request.call_args
         assert "/api/dashboard/stats/get" in kwargs["url"]
         assert kwargs["params"]["node"] == "node1"
@@ -133,7 +148,16 @@ def test_api_client_dashboard_endpoints():
         assert kwargs["params"]["dontTrimQueryTypeData"] == "false"
 
         # Test get_top_stats
-        client.get_top_stats(node="node1", stats_type="hour", start="s", end="e", stats_category="clients", limit=10, no_reverse_lookup=True, only_rate_limited_clients=False)
+        client.get_top_stats(
+            node="node1",
+            stats_type="hour",
+            start="s",
+            end="e",
+            stats_category="clients",
+            limit=10,
+            no_reverse_lookup=True,
+            only_rate_limited_clients=False,
+        )
         _, kwargs = mock_request.call_args
         assert "/api/dashboard/stats/getTop" in kwargs["url"]
         assert kwargs["params"]["statsType"] == "clients"
@@ -217,7 +241,9 @@ def test_api_client_zones_endpoints():
         assert "/api/zones/resync" in mock_request.call_args[1]["url"]
 
         # Test get_zone_options / set_zone_options
-        client.get_zone_options(zone="example.com", include_available_catalog_zone_names=True)
+        client.get_zone_options(
+            zone="example.com", include_available_catalog_zone_names=True
+        )
         _, kwargs = mock_request.call_args
         assert "/api/zones/options/get" in kwargs["url"]
         assert kwargs["params"]["includeAvailableCatalogZoneNames"] == "true"
@@ -258,10 +284,16 @@ def test_api_client_zones_endpoints():
 
         # Test convert_to_nsec / convert_to_nsec3
         client.convert_to_nsec(zone="example.com")
-        assert "/api/zones/dnssec/properties/convertToNSEC" in mock_request.call_args[1]["url"]
+        assert (
+            "/api/zones/dnssec/properties/convertToNSEC"
+            in mock_request.call_args[1]["url"]
+        )
 
         client.convert_to_nsec3(zone="example.com")
-        assert "/api/zones/dnssec/properties/convertToNSEC3" in mock_request.call_args[1]["url"]
+        assert (
+            "/api/zones/dnssec/properties/convertToNSEC3"
+            in mock_request.call_args[1]["url"]
+        )
 
         # Test update_nsec3_params
         client.update_nsec3_params(zone="example.com", iterations=10, salt_length=8)
@@ -289,16 +321,32 @@ def test_api_client_zones_endpoints():
 
         # Test publish_all_private_keys / rollover_dnskey / retire_dnskey
         client.publish_all_private_keys(zone="example.com")
-        assert "/api/zones/dnssec/properties/publishAllPrivateKeys" in mock_request.call_args[1]["url"]
+        assert (
+            "/api/zones/dnssec/properties/publishAllPrivateKeys"
+            in mock_request.call_args[1]["url"]
+        )
 
         client.rollover_dnskey(zone="example.com", key_tag=123)
-        assert "/api/zones/dnssec/properties/rolloverDnsKey" in mock_request.call_args[1]["url"]
+        assert (
+            "/api/zones/dnssec/properties/rolloverDnsKey"
+            in mock_request.call_args[1]["url"]
+        )
 
         client.retire_dnskey(zone="example.com", key_tag=123)
-        assert "/api/zones/dnssec/properties/retireDnsKey" in mock_request.call_args[1]["url"]
+        assert (
+            "/api/zones/dnssec/properties/retireDnsKey"
+            in mock_request.call_args[1]["url"]
+        )
 
         # Test add_record
-        client.add_record(zone="example.com", domain="www.example.com", type="A", ttl=3600, overwrite=True, ipAddress="1.2.3.4")
+        client.add_record(
+            zone="example.com",
+            domain="www.example.com",
+            type="A",
+            ttl=3600,
+            overwrite=True,
+            ipAddress="1.2.3.4",
+        )
         _, kwargs = mock_request.call_args
         assert "/api/zones/records/add" in kwargs["url"]
         assert kwargs["data"]["ipAddress"] == "1.2.3.4"
@@ -310,13 +358,21 @@ def test_api_client_zones_endpoints():
         assert kwargs["params"]["listZone"] == "true"
 
         # Test update_record
-        client.update_record(zone="example.com", domain="www.example.com", type="A", ttl=1800, ipAddress="5.6.7.8")
+        client.update_record(
+            zone="example.com",
+            domain="www.example.com",
+            type="A",
+            ttl=1800,
+            ipAddress="5.6.7.8",
+        )
         _, kwargs = mock_request.call_args
         assert "/api/zones/records/update" in kwargs["url"]
         assert kwargs["data"]["ipAddress"] == "5.6.7.8"
 
         # Test delete_record
-        client.delete_record(zone="example.com", domain="www.example.com", type="A", ipAddress="5.6.7.8")
+        client.delete_record(
+            zone="example.com", domain="www.example.com", type="A", ipAddress="5.6.7.8"
+        )
         _, kwargs = mock_request.call_args
         assert "/api/zones/records/delete" in kwargs["url"]
         assert kwargs["data"]["ipAddress"] == "5.6.7.8"

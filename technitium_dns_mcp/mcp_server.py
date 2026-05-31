@@ -1,4 +1,5 @@
 """Main FastMCP server and tool registration."""
+
 import os
 import sys
 from typing import Any
