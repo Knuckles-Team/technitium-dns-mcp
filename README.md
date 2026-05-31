@@ -91,4 +91,4 @@ Ensure high reliability across all components with standard test suites:
 pytest -v tests/
 ```
 
-Version: 0.24.2
+Version: 0.25.0
