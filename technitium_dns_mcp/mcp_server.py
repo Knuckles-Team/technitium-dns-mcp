@@ -13,7 +13,7 @@ from technitium_dns_mcp.mcp.mcp_dashboard import register_dashboard_tools
 from technitium_dns_mcp.mcp.mcp_user import register_user_tools
 from technitium_dns_mcp.mcp.mcp_zones import register_zones_tools
 
-__version__ = "0.25.0"
+__version__ = "0.26.0"
 logger = get_logger(name="technitium_dns_mcp")
 
 
