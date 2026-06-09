@@ -3,7 +3,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)](pyproject.toml)
 
-An ultra-premium, production-grade Model Context Protocol (MCP) server and graph-based Pydantic AI agent integration for **Technitium DNS Server**. Exposes comprehensive, 100% covered REST API endpoints for user SSO, analytics metrics, authoritative zones, DNSSEC, and dynamic DNS record operations.
+> **Documentation** — Installation, deployment, usage across the API, CLI, and MCP
+> interfaces, and guidance for provisioning the Technitium DNS Server are maintained
+> in the [official documentation](https://knuckles-team.github.io/technitium-dns-mcp/).
+
+A production-grade Model Context Protocol (MCP) server and graph-based Pydantic AI agent integration for **Technitium DNS Server**. Exposes comprehensive, 100% covered REST API endpoints for user SSO, analytics metrics, authoritative zones, DNSSEC, and dynamic DNS record operations.
 
 ---
 
@@ -90,5 +94,24 @@ Ensure high reliability across all components with standard test suites:
 ```bash
 pytest -v tests/
 ```
+
+---
+
+## Documentation
+
+The complete documentation is published as the
+[official documentation site](https://knuckles-team.github.io/technitium-dns-mcp/) and
+is the recommended reference for installation, deployment, and day-to-day operation.
+
+| Page | Contents |
+|---|---|
+| [Installation](https://knuckles-team.github.io/technitium-dns-mcp/installation/) | pip, source, extras, prebuilt Docker image |
+| [Deployment](https://knuckles-team.github.io/technitium-dns-mcp/deployment/) | run the MCP and agent servers, Compose, Caddy + Technitium, env config |
+| [Usage](https://knuckles-team.github.io/technitium-dns-mcp/usage/) | the MCP tools, the `Api` client, the CLI |
+| [Backing Platform](https://knuckles-team.github.io/technitium-dns-mcp/platform/) | deploy Technitium DNS Server with Docker |
+| [Overview](https://knuckles-team.github.io/technitium-dns-mcp/overview/) | the layered API / MCP / agent architecture |
+| [Concepts](https://knuckles-team.github.io/technitium-dns-mcp/concepts/) | concept registry (`CONCEPT:TDNS-*`) |
+
+---
 
 Version: 0.29.0
