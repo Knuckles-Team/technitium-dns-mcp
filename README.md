@@ -114,4 +114,4 @@ is the recommended reference for installation, deployment, and day-to-day operat
 
 ---
 
-Version: 0.29.0
+Version: 0.30.0
