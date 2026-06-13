@@ -114,7 +114,7 @@ is the recommended reference for installation, deployment, and day-to-day operat
 
 ---
 
-Version: 0.31.0
+Version: 0.32.0
 
 <!-- BEGIN GENERATED: additional-deployment-options -->
 ### Additional Deployment Options
