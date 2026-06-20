@@ -3,11 +3,17 @@
 import sys
 from typing import Any
 
-from agent_utilities.mcp_utilities import create_mcp_server, load_config
+from agent_utilities.mcp_utilities import (
+    create_mcp_server,
+    load_config,
+    register_tool_surface,
+)
 from fastmcp.utilities.logging import get_logger
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
+from technitium_dns_mcp.api_client import Api
+from technitium_dns_mcp.auth import get_client
 from technitium_dns_mcp.mcp.mcp_dashboard import register_dashboard_tools
 from technitium_dns_mcp.mcp.mcp_user import register_user_tools
 from technitium_dns_mcp.mcp.mcp_zones import register_zones_tools
@@ -28,10 +34,17 @@ def get_mcp_instance() -> tuple[Any, ...]:
     async def health_check(request: Request) -> JSONResponse:
         return JSONResponse({"status": "OK"})
 
-    # Always register all tools
-    register_user_tools(mcp)
-    register_dashboard_tools(mcp)
-    register_zones_tools(mcp)
+    register_tool_surface(
+        mcp,
+        client_cls=Api,
+        get_client=get_client,
+        service="technitium-dns-mcp",
+        registrars=[
+            register_user_tools,
+            register_dashboard_tools,
+            register_zones_tools,
+        ],
+    )
 
     for mw in middlewares:
         mcp.add_middleware(mw)
