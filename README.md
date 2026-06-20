@@ -152,3 +152,16 @@ to just this package. Ask your agent to **"deploy `technitium-dns-mcp` with agen
 Secrets are read-existing + seeded via `vault_sync` — you are only prompted for what's missing.
 
 <!-- END agent-os-genesis-deploy -->
+
+## Available MCP Tools
+
+<!-- MCP-TOOLS-TABLE:START -->
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `technitium_dns_dashboard` | `DASHBOARDTOOL` | Query Technitium DNS metrics, prometheus stats, category details, or delete statistics. |
+| `technitium_dns_user` | `USERTOOL` | Manage Technitium DNS user sessions, authentication, credentials, and profile settings. |
+| `technitium_dns_zones` | `ZONESTOOL` | Manage Technitium DNS authoritative zones, DNSSEC properties/keys, and perform DNS record CRUD. |
+
+_3 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+<!-- MCP-TOOLS-TABLE:END -->
