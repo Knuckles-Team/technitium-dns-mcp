@@ -77,8 +77,6 @@ pytest -v
     ├── auth.py
     ├── models.py
     ├── mcp_config.json
-    ├── agent_data
-    │   └── IDENTITY.md
     ├── api
     │   ├── __init__.py
     │   ├── api_client_base.py

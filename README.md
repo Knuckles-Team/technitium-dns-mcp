@@ -22,24 +22,88 @@ A production-grade Model Context Protocol (MCP) server and graph-based Pydantic 
 
 ## 🛠️ Installation & Setup
 
-Install package in editable mode with all optional dependencies:
+> **Install the slim `[mcp]` extra.** The `technitium-dns-mcp[mcp]` extra pulls only the
+> FastMCP / FastAPI tooling (`agent-utilities[mcp]`). It deliberately **excludes** the heavy
+> agent runtime (the epistemic-graph engine, `pydantic-ai`, `dspy`, `llama-index`,
+> `tree-sitter`), so `uvx`/container installs are dramatically smaller and faster. Use the
+> full `[agent]` extra only when you need the integrated Pydantic AI agent.
+
+Pick the extra that matches what you want to run:
+
+| Extra | Installs | Use when |
+|-------|----------|----------|
+| `technitium-dns-mcp[mcp]` | Slim MCP server only (`agent-utilities[mcp]` — FastMCP/FastAPI) | You only run the **MCP server** (smallest install / image) |
+| `technitium-dns-mcp[agent]` | Full agent runtime (`agent-utilities[agent,logfire]` — Pydantic AI + the epistemic-graph engine) | You run the **integrated agent** |
+| `technitium-dns-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
-pip install -e .[all]
+# MCP server only (recommended for tool hosting — slim deps)
+uv pip install "technitium-dns-mcp[mcp]"
+
+# Full agent runtime (Pydantic AI + epistemic-graph engine)
+uv pip install "technitium-dns-mcp[agent]"
+
+# Everything (development)
+uv pip install "technitium-dns-mcp[all]"      # or: python -m pip install "technitium-dns-mcp[all]"
 ```
+
+### Container images (`:mcp` vs `:agent`)
+
+One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
+
+| Image tag | Build target | Contents | Entrypoint |
+|-----------|--------------|----------|------------|
+| `knucklessg1/technitium-dns-mcp:mcp` | `--target mcp` | `technitium-dns-mcp[mcp]` — **slim**, no engine/`pydantic-ai`/`dspy`/`llama-index`/`tree-sitter` | `technitium-dns-mcp` |
+| `knucklessg1/technitium-dns-mcp:latest` | `--target agent` (default) | `technitium-dns-mcp[agent]` — **full** agent runtime + epistemic-graph engine | `technitium-dns-agent` |
+
+```bash
+docker build --target mcp   -t knucklessg1/technitium-dns-mcp:mcp    docker/   # slim MCP server
+docker build --target agent -t knucklessg1/technitium-dns-mcp:latest docker/   # full agent
+```
+
+### Knowledge-graph database (`epistemic-graph`)
+
+The **full agent** (`[agent]` / `:latest`) embeds the **epistemic-graph** engine (pulled in
+transitively via `agent-utilities[agent]`). For production — or to share one knowledge graph
+across multiple agents — run **epistemic-graph as its own database container** and point the
+agent at it instead of embedding it. Deployment recipes (single-node + Raft HA), connection
+config, and the full database architecture (with diagrams) are documented in the
+[epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
+The slim `[mcp]` server does **not** require the database.
 
 ### Environment Variables
 
-Configure `.env` using `.env.example` as a template:
+Every variable the server reads, grouped by purpose. See [`.env.example`](.env.example)
+for a copy-paste starting point.
 
-```bash
-# Server Endpoint & TLS
-TECHNITIUM_DNS_URL=http://localhost:5380
-TECHNITIUM_DNS_SSL_VERIFY=True
+#### Connection & credentials
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `TECHNITIUM_DNS_URL` | Base URL of the Technitium DNS Server | `http://localhost:5380` |
+| `TECHNITIUM_DNS_TOKEN` | API token / SSO token | — |
+| `TECHNITIUM_DNS_SSL_VERIFY` | TLS verification | `True` |
 
-# Credentials / API Tokens
-TECHNITIUM_DNS_TOKEN=your-secure-token
-```
+#### MCP server / transport
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `TRANSPORT` | `stdio`, `streamable-http`, or `sse` | `stdio` |
+| `HOST` | Bind host (HTTP transports) | `0.0.0.0` |
+| `PORT` | Bind port (HTTP transports) | `8000` |
+| `MCP_TOOL_MODE` | Tool surface: `condensed`, `verbose`, or `both` | `condensed` |
+| `MCP_ENABLED_TOOLS` / `MCP_DISABLED_TOOLS` | Comma-separated tool allow/deny list | — |
+| `MCP_ENABLED_TAGS` / `MCP_DISABLED_TAGS` | Comma-separated tag allow/deny list | — |
+
+#### Tool toggles
+Each action-routed tool can be disabled individually via its toggle env var (set to `false`):
+`DASHBOARDTOOL`, `USERTOOL`, `ZONESTOOL` — see the
+[Available MCP Tools](#available-mcp-tools) table below.
+
+#### Agent runtime (full `[agent]` runtime only)
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MCP_URL` | URL of the MCP server the agent connects to | `http://localhost:8000/mcp` |
+| `PROVIDER` | LLM provider (e.g. `openai`) | `openai` |
+| `MODEL_ID` | Model id (e.g. `gpt-4o`) | `gpt-4o` |
 
 ---
 
