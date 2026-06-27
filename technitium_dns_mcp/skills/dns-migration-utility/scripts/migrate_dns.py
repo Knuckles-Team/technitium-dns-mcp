@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import argparse
-import sys
 import json
 import logging
 import re
+import sys
+
 from technitium_dns_mcp.api.api_client import Api
 
 logging.basicConfig(
@@ -12,7 +13,9 @@ logging.basicConfig(
 
 
 class DNSAdapter:
+    def parse(self, file_path):
         """Parse the DNS records. Must be implemented by subclasses."""
+
         return []
 
 
@@ -20,7 +23,7 @@ class AdGuardAdapter(DNSAdapter):
     def parse(self, file_path):
         records = []
         logging.info(f"Parsing AdGuard rewrites file: {file_path}")
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             data = json.load(f)
 
         # AdGuard can export as a list of {"domain": "...", "answer": "..."}
@@ -38,7 +41,7 @@ class PiholeAdapter(DNSAdapter):
         records = []
         logging.info(f"Parsing Pi-hole custom list file: {file_path}")
         # Pi-hole custom list is typically standard hosts format: <ip> <domain>
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             for line in f:
                 line = line.strip()
                 if not line or line.startswith("#"):
@@ -58,7 +61,7 @@ class BindAdapter(DNSAdapter):
         a_record_pattern = re.compile(
             r"^([a-zA-Z0-9_\-\.]+)\s+(?:\d+\s+)?(?:IN\s+)?A\s+([0-9\.]+)"
         )
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             for line in f:
                 line = line.strip()
                 if not line or line.startswith(";"):
@@ -74,7 +77,7 @@ class GenericAdapter(DNSAdapter):
     def parse(self, file_path):
         records = []
         logging.info(f"Parsing generic JSON format: {file_path}")
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             data = json.load(f)
         for entry in data:
             domain = entry.get("domain") or entry.get("host")
