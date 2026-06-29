@@ -222,7 +222,7 @@ is the recommended reference for installation, deployment, and day-to-day operat
 
 ---
 
-Version: 0.34.0
+Version: 1.0.0
 
 <!-- BEGIN GENERATED: additional-deployment-options -->
 ### Additional Deployment Options
