@@ -7,7 +7,12 @@
         "technitium_dns_mcp.mcp_server"
       ],
       "env": {
-        "MCP_TOOL_MODE": "condensed"
+        "MCP_TOOL_MODE": "condensed",
+        "DASHBOARDTOOL": "True",
+        "TECHNITIUM_DNS_TOKEN": "",
+        "TECHNITIUM_DNS_URL": "http://localhost:5380",
+        "USERTOOL": "True",
+        "ZONESTOOL": "True"
       }
     }
   }
