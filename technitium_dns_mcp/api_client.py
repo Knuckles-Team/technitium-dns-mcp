@@ -1,4 +1,4 @@
-"""CONCEPT:TDNS-001 Dynamic client facade orchestration and resource mappings."""
+"""CONCEPT:TD-OS.config.tdns Dynamic client facade orchestration and resource mappings."""
 
 from technitium_dns_mcp.api.api_client_dashboard import ApiClientDashboard
 from technitium_dns_mcp.api.api_client_user import ApiClientUser

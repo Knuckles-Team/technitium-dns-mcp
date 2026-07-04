@@ -11,7 +11,7 @@ from technitium_dns_mcp.auth import get_client
 
 def register_zones_tools(mcp: FastMCP):
     """Register Technitium DNS zone management and record CRUD tools.
-    CONCEPT:TDNS-002
+    CONCEPT:TD-OS.config.tdns-2
     """
 
     @mcp.tool(tags={"zones"})
