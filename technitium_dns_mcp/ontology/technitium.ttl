@@ -1,0 +1,123 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix : <http://knuckles.team/kg#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Technitium DNS ontology — authoritative zones, DNS records, DNSSEC signing keys, and
+# the DNS server node that hosts them. All classes/properties live in the shared `:` (kg#)
+# namespace; only the owl:Ontology node gets the per-package IRI. Backs the technitium-dns-mcp
+# tool surface (technitium_dns_zones / technitium_dns_dashboard / technitium_dns_user).
+
+# --- classes (owl:Class) ---
+
+:DnsZone a owl:Class ;
+    rdfs:label "DNS Zone" ;
+    rdfs:comment "An authoritative DNS zone hosted on a Technitium server (Primary, Secondary, Stub, Forwarder, or Catalog), listed by technitium_dns_zones action=list_zones." .
+
+:DnsRecord a owl:Class ;
+    rdfs:label "DNS Record" ;
+    rdfs:comment "A resource record within a zone (A, AAAA, CNAME, TXT, MX, SRV, NS, CAA, PTR, SOA, …) with a name, type, TTL, and record data (technitium_dns_zones action=get_records)." .
+
+:DnssecKey a owl:Class ;
+    rdfs:label "DNSSEC Key" ;
+    rdfs:comment "A DNSSEC signing key (KSK or ZSK) attached to a signed zone, with its algorithm and lifecycle state (technitium_dns_zones action=get_dnssec_properties / add_private_key)." .
+
+:DnsServerNode a owl:Class ;
+    rdfs:label "DNS Server Node" ;
+    rdfs:comment "A Technitium DNS server node/instance that hosts zones and answers queries (the 'node' targeted by tool actions; stats via technitium_dns_dashboard)." .
+
+# --- links (owl:ObjectProperty) ---
+
+:hostedOnNode a owl:ObjectProperty ;
+    rdfs:label "hosted on node" ;
+    rdfs:comment "Links a DnsZone to the DnsServerNode that serves it authoritatively." ;
+    rdfs:domain :DnsZone ;
+    rdfs:range :DnsServerNode .
+
+:recordInZone a owl:ObjectProperty ;
+    rdfs:label "record in zone" ;
+    rdfs:comment "Links a DnsRecord to the DnsZone it belongs to." ;
+    rdfs:domain :DnsRecord ;
+    rdfs:range :DnsZone .
+
+:signsZone a owl:ObjectProperty ;
+    rdfs:label "signs zone" ;
+    rdfs:comment "Links a DnssecKey to the DnsZone it signs." ;
+    rdfs:domain :DnssecKey ;
+    rdfs:range :DnsZone .
+
+:managedBy a owl:ObjectProperty ;
+    rdfs:label "managed by" ;
+    rdfs:comment "Links a DNS resource to the Person/Agent responsible for it." ;
+    rdfs:domain :DnsZone ;
+    rdfs:range :Person .
+
+# --- fields (owl:DatatypeProperty) ---
+
+:technitiumId a owl:DatatypeProperty ;
+    rdfs:label "technitium id" ;
+    rdfs:comment "External identifier of a Technitium resource (zone name, record fqdn|type, or key tag)." ;
+    rdfs:range xsd:string .
+
+:zoneType a owl:DatatypeProperty ;
+    rdfs:label "zone type" ;
+    rdfs:comment "Technitium zone type: Primary, Secondary, Stub, Forwarder, SecondaryForwarder, Catalog, or SecondaryCatalog." ;
+    rdfs:domain :DnsZone ;
+    rdfs:range xsd:string .
+
+:dnssecStatus a owl:DatatypeProperty ;
+    rdfs:label "dnssec status" ;
+    rdfs:comment "DNSSEC state of a zone: Unsigned, SignedWithNSEC, or SignedWithNSEC3." ;
+    rdfs:domain :DnsZone ;
+    rdfs:range xsd:string .
+
+:disabled a owl:DatatypeProperty ;
+    rdfs:label "disabled" ;
+    rdfs:comment "Whether the zone or record is currently disabled." ;
+    rdfs:range xsd:boolean .
+
+:recordType a owl:DatatypeProperty ;
+    rdfs:label "record type" ;
+    rdfs:comment "DNS record type (A, AAAA, CNAME, TXT, MX, SRV, NS, CAA, PTR, SOA, …)." ;
+    rdfs:domain :DnsRecord ;
+    rdfs:range xsd:string .
+
+:recordData a owl:DatatypeProperty ;
+    rdfs:label "record data" ;
+    rdfs:comment "The record's data payload (rData), rendered as text (e.g. an IP address, target name, or TXT value)." ;
+    rdfs:domain :DnsRecord ;
+    rdfs:range xsd:string .
+
+:ttl a owl:DatatypeProperty ;
+    rdfs:label "ttl" ;
+    rdfs:comment "Time-to-live of a DNS record in seconds." ;
+    rdfs:domain :DnsRecord ;
+    rdfs:range xsd:integer .
+
+:keyType a owl:DatatypeProperty ;
+    rdfs:label "key type" ;
+    rdfs:comment "DNSSEC key role: KeySigningKey (KSK) or ZoneSigningKey (ZSK)." ;
+    rdfs:domain :DnssecKey ;
+    rdfs:range xsd:string .
+
+:algorithm a owl:DatatypeProperty ;
+    rdfs:label "algorithm" ;
+    rdfs:comment "DNSSEC signing algorithm (e.g. ECDSAP256SHA256, RSASHA256)." ;
+    rdfs:domain :DnssecKey ;
+    rdfs:range xsd:string .
+
+:keyState a owl:DatatypeProperty ;
+    rdfs:label "key state" ;
+    rdfs:comment "DNSSEC key lifecycle state (Ready, Active, Published, Retired, Revoked)." ;
+    rdfs:domain :DnssecKey ;
+    rdfs:range xsd:string .
+
+<http://knuckles.team/kg/technitium> a owl:Ontology ;
+    rdfs:label "Technitium DNS Ontology" ;
+    rdfs:comment """Technitium DNS domain extensions federated into the agent-utilities
+    knowledge-graph hub: authoritative zones, records, DNSSEC keys, and the server node
+    that hosts them.""" ;
+    owl:imports <http://knuckles.team/kg> .

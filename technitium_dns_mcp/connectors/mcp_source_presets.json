@@ -1,0 +1,15 @@
+{
+  "_comment": "Tier-1 mcp_tool source preset(s) for technitium-dns-mcp (AU-KG.ingest.mcp-tool-connector). Lists authoritative zones via the technitium_dns_zones tool; the hub mirrors them as :DnsZone documents. Contributed presets win over the central MCP_TOOL_PRESETS.",
+  "technitium-zones": {
+    "server": "technitium-dns-mcp",
+    "tool": "technitium_dns_zones",
+    "action": "list_zones",
+    "params": {"action": "list_zones", "params_json": "{}"},
+    "records_path": "response.zones",
+    "id_field": "name",
+    "title_field": "name",
+    "text_field": "type",
+    "updated_field": "lastModified",
+    "doc_type": "technitium_zone"
+  }
+}

@@ -38,6 +38,12 @@ technitium-dns-agent = "technitium_dns_mcp.agent_server:agent_server"
 [project.entry-points."agent_utilities.skill_providers"]
 technitium-dns-mcp = "technitium_dns_mcp.skills"
 
+[project.entry-points."agent_utilities.ontology_providers"]
+technitium-dns-mcp = "technitium_dns_mcp.ontology"
+
+[project.entry-points."agent_utilities.source_connector_providers"]
+technitium-dns-mcp = "technitium_dns_mcp.connectors"
+
 [project.entry-points."agent_utilities.prompt_providers"]
 technitium-dns-mcp = "technitium_dns_mcp.prompts"
 
@@ -57,7 +63,7 @@ check_untyped_defs = true
 dev = [ "pytest-timeout>=2.4.0", ]
 
 [tool.setuptools.package-data]
-technitium_dns_mcp = [ "mcp_config.json", "prompts/**", "skills/**",]
+technitium_dns_mcp = [ "mcp_config.json", "prompts/**", "skills/**", "ontology/**", "connectors/**",]
 
 [tool.ruff.lint]
 select = [ "E", "F", "I", "UP", "B", ]

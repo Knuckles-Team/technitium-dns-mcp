@@ -15,6 +15,7 @@ from starlette.responses import JSONResponse
 from technitium_dns_mcp.api_client import Api
 from technitium_dns_mcp.auth import get_client
 from technitium_dns_mcp.mcp.mcp_dashboard import register_dashboard_tools
+from technitium_dns_mcp.mcp.mcp_ingest import register_ingest_tools
 from technitium_dns_mcp.mcp.mcp_user import register_user_tools
 from technitium_dns_mcp.mcp.mcp_zones import register_zones_tools
 
@@ -43,6 +44,7 @@ def get_mcp_instance() -> tuple[Any, ...]:
             register_user_tools,
             register_dashboard_tools,
             register_zones_tools,
+            register_ingest_tools,
         ],
     )
 
