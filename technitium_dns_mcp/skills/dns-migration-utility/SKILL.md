@@ -1,5 +1,6 @@
 ---
 name: dns-migration-utility
+skill_type: skill
 description: >
   DNS Migration Utility atomic skill. Extracts DNS rewrites, hosts lists, and zone files
   from legacy resolvers (AdGuard Home, Pi-hole, bind9) and prepares them for authoritative Technitium DNS integration.

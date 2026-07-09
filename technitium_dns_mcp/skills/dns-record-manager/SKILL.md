@@ -1,5 +1,6 @@
 ---
 name: dns-record-manager
+skill_type: skill
 description: >
   DNS Record Manager atomic skill. Manages authoritative zones and records (A, CNAME, TXT)
   on Technitium DNS primary server using technitium-dns-mcp.
