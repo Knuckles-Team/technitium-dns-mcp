@@ -1,5 +1,6 @@
 ---
 name: technitium-dns-mcp-operations
+skill_type: skill
 description: >-
   Operate technitium-dns-mcp through its governed MCP and GraphOS capabilities, including dns migration utility, dns record manager. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
 ---
