@@ -18,7 +18,7 @@ work with no configuration beyond the connection details and a valid token.
 Example agent prompts that map onto these tools:
 
 - *"List the authoritative zones on the primary server"* → `zones`
-- *"Add an A record `app.arpa → 10.0.0.10`"* → `zones`
+- *"Add an A record `app.example.invalid → 192.0.2.10`"* → `zones`
 - *"Show me the dashboard statistics for the last day"* → `dashboard`
 
 ## As a Python API
@@ -47,7 +47,6 @@ from technitium_dns_mcp.api_client import Api
 api = Api(
     base_url="http://your-technitium:5380",
     token="your-api-token",
-    verify=True,
 )
 zones = api.list_zones()
 ```
@@ -57,8 +56,8 @@ zones = api.list_zones()
 The same client manages zones and records:
 
 ```python
-api.create_zone(zone="example.arpa", type="Primary")
-api.add_record(zone="example.arpa", domain="app.example.arpa", type="A", ipAddress="10.0.0.10")
+api.create_zone(zone="example.example.invalid", type="Primary")
+api.add_record(zone="example.example.invalid", domain="app.example.example.invalid", type="A", ipAddress="192.0.2.10")
 api.update_record(...)
 api.delete_record(...)
 ```

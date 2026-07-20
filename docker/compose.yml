@@ -1,12 +1,25 @@
 services:
   technitium-dns-mcp:
+    init: true
+    user: "10001:10001"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: ${MCP_CONTAINER_MEMORY_LIMIT:-2g}
+    cpus: ${MCP_CONTAINER_CPU_LIMIT:-1.0}
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m
     build: .
     environment:
       - TECHNITIUM_DNS_URL
       - TECHNITIUM_DNS_TOKEN
-      - TECHNITIUM_DNS_SSL_VERIFY
+      - TLS_PROFILE
+      - TLS_PROFILES_REF
       - TRANSPORT=streamable-http
       - HOST=0.0.0.0
       - PORT=8000
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"

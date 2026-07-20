@@ -2,8 +2,8 @@
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. Lists zones (and, per zone, their
 records) via the real client and pushes them into the knowledge graph as typed
-``:DnsZone`` / ``:DnsRecord`` / ``:DnsServerNode`` nodes. Best-effort: returns
-``{"ingested": None}`` when no engine is reachable.
+``:DnsZone`` / ``:DnsRecord`` / ``:DnsServerNode`` nodes. Native-ingest failures
+propagate to the caller.
 """
 
 from typing import Any
@@ -35,17 +35,21 @@ def register_ingest_tools(mcp: FastMCP):
         Lists authoritative zones via ``list_zones`` and pushes them as typed
         ``:DnsZone`` nodes (linked to the ``:DnsServerNode``); for each zone it also
         pulls records via ``get_records`` and ingests ``:DnsRecord`` nodes linked with
-        ``:recordInZone``. Best-effort — returns ``{"ingested": None}`` with no engine.
+        ``:recordInZone``. Native-ingest failures propagate to the caller.
         CONCEPT:AU-KG.ingest.enterprise-source-extractor.
         """
         import json
+
+        from agent_utilities.knowledge_graph.memory.native_ingest import (
+            NativeIngestError,
+        )
 
         from technitium_dns_mcp.kg_ingest import ingest_records, ingest_zones
 
         try:
             opts = json.loads(params_json) if params_json else {}
-        except Exception as e:  # noqa: BLE001
-            return {"error": f"Invalid params_json: {e}"}
+        except Exception:  # noqa: BLE001
+            return {"error": "Operation failed"}
 
         node = opts.get("node")
         include_records = opts.get("include_records", True)
@@ -76,8 +80,12 @@ def register_ingest_tools(mcp: FastMCP):
                         domain=name, zone=name, list_zone=True, node=node
                     )
                     record_results[name] = ingest_records(recs, name, node=node)
-                except Exception as e:  # noqa: BLE001 — per-zone best-effort
+                except NativeIngestError:
+                    raise
+                except Exception as e:  # noqa: BLE001 — isolate source API failures
                     if ctx:
-                        await ctx.info(f"Skipped records for zone {name}: {e}")
+                        await ctx.info(
+                            f"Skipped records for a zone: {type(e).__name__}"
+                        )
 
         return {"zones": zone_result, "records": record_results}

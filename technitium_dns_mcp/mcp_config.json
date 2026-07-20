@@ -10,7 +10,7 @@
         "MCP_TOOL_MODE": "condensed",
         "DASHBOARDTOOL": "True",
         "TECHNITIUM_DNS_TOKEN": "",
-        "TECHNITIUM_DNS_URL": "http://localhost:5380",
+        "TECHNITIUM_DNS_URL": "",
         "USERTOOL": "True",
         "ZONESTOOL": "True"
       }

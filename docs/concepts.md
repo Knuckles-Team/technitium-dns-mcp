@@ -11,5 +11,5 @@
 - **Traceability**: `technitium_dns_mcp/mcp/`
 
 ### TD-OS.identity.tdns: Identity & Gateway Security
-- **Description**: Secure credential loading, Bearer token auth support, and SSL verification settings.
+- **Description**: Secure credential loading, bearer-token authentication, and named TLS profiles.
 - **Traceability**: `technitium_dns_mcp/auth.py`

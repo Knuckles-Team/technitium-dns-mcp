@@ -20,12 +20,12 @@ DNS server with its web console / API on `:5380`:
 # docker/technitium.compose.yml
 services:
   technitium:
-    image: technitium/dns-server:latest
+    image: technitium/dns-server@sha256:<digest>
     container_name: technitium-dns
     hostname: dns-server
     restart: always
     environment:
-      - DNS_SERVER_DOMAIN=technitium.arpa
+      - DNS_SERVER_DOMAIN=technitium.example.invalid
       - DNS_SERVER_ADMIN_PASSWORD=${DNS_SERVER_ADMIN_PASSWORD}
       - DNS_SERVER_WEB_SERVICE_PORT=5380
       - DNS_SERVER_WEB_SERVICE_ENABLE_HTTPS=false
@@ -54,9 +54,10 @@ Obtain an API token from the Technitium web console (or via the API) and point t
 connector at the server:
 
 ```bash
-export TECHNITIUM_DNS_URL=http://localhost:5380
+export TECHNITIUM_DNS_URL=<configured-endpoint>
 export TECHNITIUM_DNS_TOKEN=your-api-token
-export TECHNITIUM_DNS_SSL_VERIFY=False          # plain HTTP / self-signed homelab
+export TLS_PROFILE=private-pki
+export TLS_PROFILES_REF=secret://runtime/tls-profiles
 
 technitium-dns-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 ```
@@ -70,10 +71,10 @@ the connector reaches Technitium by container name:
 # docker/stack.compose.yml
 services:
   technitium:
-    image: technitium/dns-server:latest
+    image: technitium/dns-server@sha256:<digest>
     hostname: dns-server
     environment:
-      - DNS_SERVER_DOMAIN=technitium.arpa
+      - DNS_SERVER_DOMAIN=technitium.example.invalid
       - DNS_SERVER_ADMIN_PASSWORD=${DNS_SERVER_ADMIN_PASSWORD}
       - DNS_SERVER_WEB_SERVICE_PORT=5380
       - DNS_SERVER_WEB_SERVICE_ENABLE_HTTPS=false
@@ -85,12 +86,13 @@ services:
       - technitium_config:/etc/dns
 
   technitium-dns-mcp:
-    image: knucklessg1/technitium-dns-mcp:latest
+    image: example/technitium-dns-mcp@sha256:<digest>
     depends_on: [technitium]
     environment:
-      - TECHNITIUM_DNS_URL=http://technitium:5380
+      - TECHNITIUM_DNS_URL=${TECHNITIUM_DNS_URL:?required}
       - TECHNITIUM_DNS_TOKEN=${TECHNITIUM_DNS_TOKEN}
-      - TECHNITIUM_DNS_SSL_VERIFY=False
+      - TLS_PROFILE=private-pki
+      - TLS_PROFILES_REF=secret://runtime/tls-profiles
       - TRANSPORT=streamable-http
       - HOST=0.0.0.0
       - PORT=8000

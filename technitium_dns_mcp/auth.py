@@ -2,20 +2,25 @@
 
 from agent_utilities.base_utilities import get_logger
 from agent_utilities.core.config import setting
+from agent_utilities.core.transport_security import (
+    ResolvedTLSProfile,
+    resolve_configured_tls_profile,
+)
 
 from technitium_dns_mcp.api_client import Api
 
 logger = get_logger(__name__)
 
 
-def get_client() -> Api:
+def get_client(tls_profile: ResolvedTLSProfile | None = None) -> Api:
     """Get authenticated client for technitium_dns_mcp."""
-    base_url = setting("TECHNITIUM_DNS_URL", "") or "http://localhost:5380"
+    base_url = setting("TECHNITIUM_DNS_URL", "")
     token = setting("TECHNITIUM_DNS_TOKEN", "")
-    verify = bool(setting("TECHNITIUM_DNS_SSL_VERIFY", True))
+    if not base_url:
+        raise RuntimeError("TECHNITIUM_DNS_URL is required")
 
     return Api(
         base_url=base_url,
         token=token,
-        verify=verify,
+        tls_profile=tls_profile or resolve_configured_tls_profile("technitium_dns"),
     )

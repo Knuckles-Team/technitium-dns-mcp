@@ -51,7 +51,7 @@ technitium-dns-mcp                       # stdio MCP server (default transport)
 Connect it to a Technitium DNS Server:
 
 ```bash
-export TECHNITIUM_DNS_URL=http://your-technitium:5380
+export TECHNITIUM_DNS_URL=<configured-endpoint>
 export TECHNITIUM_DNS_TOKEN=your-api-token
 technitium-dns-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 ```

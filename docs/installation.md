@@ -48,16 +48,16 @@ uv run technitium-dns-mcp
 
 ## Prebuilt Docker image
 
-A multi-stage, slim image is published on every release (entrypoint
+A multi-stage runtime image is published on every release (entrypoint
 `technitium-dns-mcp`):
 
 ```bash
-docker pull knucklessg1/technitium-dns-mcp:latest
+docker pull example/technitium-dns-mcp@sha256:<digest>
 
 docker run --rm -i \
-  -e TECHNITIUM_DNS_URL=http://your-technitium:5380 \
+  -e TECHNITIUM_DNS_URL=<configured-endpoint> \
   -e TECHNITIUM_DNS_TOKEN=your-api-token \
-  knucklessg1/technitium-dns-mcp:latest        # stdio transport (default)
+  example/technitium-dns-mcp@sha256:<digest>        # stdio transport (default)
 ```
 
 For an HTTP server with a published port, see [Deployment](deployment.md).

@@ -2,7 +2,10 @@ from typing import Any
 from urllib.parse import urljoin
 
 import requests
-import urllib3
+from agent_utilities.core.transport_security import (
+    ResolvedTLSProfile,
+    resolve_configured_tls_profile,
+)
 
 
 class ApiClientBase:
@@ -10,18 +13,22 @@ class ApiClientBase:
         self,
         base_url: str,
         token: str | None = None,
-        verify: bool = True,
+        tls_profile: ResolvedTLSProfile | None = None,
     ):
         self.base_url = base_url.rstrip("/")
         self.token = token
-        self._session = requests.Session()
-        self._session.verify = verify
-
-        if not verify:
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        self.tls_profile = tls_profile or resolve_configured_tls_profile(
+            "technitium_dns"
+        )
+        self._session = self.tls_profile.configure_requests_session(requests.Session())
 
         if token:
             self._session.headers.update({"Authorization": f"Bearer {token}"})
+
+    def close(self) -> None:
+        """Release transport resources and runtime-only TLS material."""
+        self._session.close()
+        self.tls_profile.cleanup()
 
     def request(
         self,
@@ -38,7 +45,7 @@ class ApiClientBase:
         if headers:
             req_headers.update(headers)
 
-        # Merge token as query param / form param if not in header to ensure backward compatibility
+        # Technitium's native API accepts the token in query/form parameters.
         if self.token:
             if method.upper() == "GET":
                 if params is None:
@@ -61,7 +68,7 @@ class ApiClientBase:
         )
 
         if response.status_code >= 400:
-            raise Exception(f"API error: {response.status_code} - {response.text}")
+            raise Exception(f"API error: {response.status_code}")
 
         # Check if the response is file export / download (not JSON)
         content_type = response.headers.get("Content-Type", "")

@@ -117,6 +117,7 @@ sync:
   updated_field: lastModified
   pagination: null
   doc_type: technitium_zone
+  tool_schema_sha256: a1b94c8b1b03d9974358200307721c175a9bf59e4bdfb325566d0319c7c510da
   raw:
     server: technitium-dns-mcp
     tool: technitium_dns_zones
@@ -132,16 +133,19 @@ sync:
     doc_type: technitium_zone
 provenance:
   generated_by: scripts/generate_connector_manifests.py
-  generated_at: '2026-07-09T00:00:00Z'
+  generated_at: '2026-07-18T00:00:00Z'
   source_artifacts:
   - technitium_dns_mcp/connectors/mcp_source_presets.json
+  - technitium_dns_mcp/connectors/tool_schema_fingerprints.json
   - technitium_dns_mcp/ontology/technitium.ttl
   integrity:
     algorithm: urdna2015-sha256
     hash: 3de400c3920ce54a01196d43bfc71be922c56be78bf1c0d26210a133519d7c18
     triple_count: 63
   signer: ontology-manifest-generator
-  signature: 7ebf67daf50e85b3aaed8851c00f25457b382548d942a1a82543b4eac82a2b75
+  signature_algorithm: ed25519
+  signing_public_key: q0Cp7bmQMqJhbofGKKw8xXC6KbFzukBDDke0UYVi8y4
+  signature: CDOCGIHGDs71UvIfQl4yHovCdMqYF2HhG1zH5ea_bKx8trWQ7LhwKnGXFAzvNgZVlELwxUmI2ug9urbapujWCg
 policy:
   pii_fields: {}
   tenant_boundary: null

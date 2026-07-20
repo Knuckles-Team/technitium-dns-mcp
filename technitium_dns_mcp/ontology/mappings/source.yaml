@@ -1,0 +1,20 @@
+schema_version: '1'
+connector: technitium-dns-mcp
+ontology_source: technitium
+sync:
+- preset: technitium-zones
+  server: technitium-dns-mcp
+  tool: technitium_dns_zones
+  action: list_zones
+  records_path: response.zones
+  id_field: name
+  title_field: name
+  text_field: type
+  updated_field: lastModified
+  doc_type: technitium_zone
+  tool_schema_sha256: a1b94c8b1b03d9974358200307721c175a9bf59e4bdfb325566d0319c7c510da
+governance:
+  default_acl: quarantine
+  identity: opaque-reference
+  tenant: required-at-materialization
+  provenance: required-at-materialization

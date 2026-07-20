@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technitium Dns MCP Operations"
+  short_description: "Help with Technitium Dns MCP Operations tasks"
+  default_prompt: "Use $technitium-dns-mcp-operations to complete a governed provider workflow."
