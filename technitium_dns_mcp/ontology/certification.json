@@ -1,7 +1,8 @@
 {
   "api_version": "graphos.io/v1",
   "artifacts": {
-    "connector_manifest.yml": "16dd79760d6bc3b4bfb605b4eb40b903dd9c1db2857bf97bcc3099bbb0cbd247",
+    "a2a.json": "8b256def85cb5f3a0b61a22b9132fdce21a37dc864b5202b1e127be3af155ede",
+    "connector_manifest.yml": "de9757f4bdd405bd36090d3dba2b954ba31ed09fa28fe758609de616c77adba7",
     "technitium_dns_mcp/connectors/mcp_source_presets.json": "edc70e44b0e87573a844792e1bbe6975de81c524a03214abc788426b657306de",
     "technitium_dns_mcp/connectors/tool_schema_fingerprints.json": "4597051339743bd7f2f9da0a6dbaba34cf3d1c14c21d0b97cee08faeaeba2b70",
     "technitium_dns_mcp/ontology/fixtures/records.json": "9f46347ce5c5b9aeb90c74a1b965dbeecc902cbddb2796c68eecab32779fb18d",
@@ -18,19 +19,19 @@
     "synthetic_fixture_contract": "passed"
   },
   "compatibility": {
-    "agent_utilities": ">=1.27.1,<2",
+    "agent_utilities": ">=2.1.0,<3",
     "bundle_schema": "2",
-    "epistemic_graph": ">=2.23.1,<3"
+    "epistemic_graph": ">=2.23.0,<3"
   },
   "connector": "technitium-dns-mcp",
   "kind": "ConnectorSourceAttestation",
   "live_certified": false,
   "mode": "offline-source",
   "schema_version": "2",
-  "signature": "HWaBMNwT_I_KVAeIJ9DW50xSyLIQtFoQtTB4O7x7sedq3jxsco7H2aM7KobSWlBelRRCz2AAds0bRaJGTdTdAQ",
+  "signature": "HXgzU7Fd4JUUJla45C5-kIgmzLEq-tWnZ6PhiFKx3AY47rExjLxFofOUZFRn2_Pen8n2CuXIycz3GDg-P-LuCw",
   "signature_algorithm": "ed25519",
   "signer": "ontology-manifest-generator",
-  "signing_public_key": "q0Cp7bmQMqJhbofGKKw8xXC6KbFzukBDDke0UYVi8y4",
+  "signing_public_key": "QkigdPNpcUU7x7NcSkwCsUXIQpaFncMQbYSoiSgI2SY",
   "status": "source-validated",
-  "validated_at": "2026-07-18T00:00:00Z"
+  "validated_at": "2026-07-31T04:00:00Z"
 }
