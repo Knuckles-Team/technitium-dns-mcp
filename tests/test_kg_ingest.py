@@ -8,8 +8,14 @@ CONCEPT:AU-KG.ingest.enterprise-source-extractor.
 
 from __future__ import annotations
 
+from typing import Any
+
+import msgpack
 import pytest
 from agent_utilities.knowledge_graph.memory.native_ingest import NativeIngestError
+from agent_utilities.security.brain_context import ActorContext, use_actor
+from agent_utilities.models.company_brain import ActorType
+from agent_utilities.knowledge_graph.core.session import GraphSession, use_session
 
 from technitium_dns_mcp.kg_ingest import (
     ingest_entities,
@@ -18,30 +24,92 @@ from technitium_dns_mcp.kg_ingest import (
 )
 
 
-class _FakeTxn:
-    def __init__(self):
-        self.nodes = {}
-        self.edges = []
-        self.committed = False
+@pytest.fixture(autouse=True)
+def _governed_session():
+    actor = ActorContext(
+        actor_id="subject:opaque:synthetic",
+        actor_type=ActorType.AUTOMATED_SERVICE,
+        roles=(),
+        tenant_id="tenant:opaque:synthetic",
+        authenticated=True,
+    )
+    session = GraphSession(
+        actor=actor,
+        tenant=actor.tenant_id,
+        scopes=frozenset({"kg:write"}),
+        graph="graph:opaque:synthetic",
+        policy_version="policy:opaque:synthetic",
+        audience="epistemic-graph",
+    )
+    with use_actor(actor), use_session(session):
+        yield
 
-    def begin(self, graph=None):
-        self.graph = graph
-        return "txn-1"
 
-    def add_node(self, txn, node_id, props):
-        self.nodes[node_id] = props
+class _FakeNodes:
+    def __init__(self) -> None:
+        self.values: dict[str, dict[str, Any]] = {}
 
-    def add_edge(self, txn, source, target, props):
-        self.edges.append((source, target, props))
+    def properties(self, node_id: str) -> dict[str, Any] | None:
+        return self.values.get(node_id)
 
-    def commit(self, txn):
-        self.committed = True
-        return True
+    def list(self) -> list[tuple[str, dict[str, Any]]]:
+        return list(self.values.items())
+
+
+class _FakeChanges:
+    def __init__(self, nodes: _FakeNodes) -> None:
+        self.nodes = nodes
+        self.edges: list[tuple[str, str, dict[str, Any]]] = []
+        self.applied: list[dict[str, Any]] = []
+        self.records: dict[str, dict[str, Any]] = {}
+        self.versions: dict[str, dict[str, Any]] = {}
+
+    def get(self, envelope_id: str) -> dict[str, Any] | None:
+        return self.records.get(envelope_id)
+
+    def content_version(self, object_id: str) -> dict[str, Any] | None:
+        return self.versions.get(object_id)
+
+    def cursor(self, _source: str, _partition: str = "") -> None:
+        return None
+
+    def apply(self, envelope: dict[str, Any]) -> dict[str, Any]:
+        self.applied.append(envelope)
+        mutation = envelope["mutation"]
+        for operation in mutation["operations"]:
+            method = operation["method"]
+            params = method["params"]
+            properties = msgpack.unpackb(params["properties_msgpack"], raw=False)
+            if method["method"] == "AddNode":
+                self.nodes.values[params["node_id"]] = properties
+            elif method["method"] == "AddEdge":
+                self.edges.append(
+                    (params["source_id"], params["target_id"], properties)
+                )
+        version = envelope["content_version"]
+        self.versions[version["object_id"]] = version
+        self.records[envelope["envelope_id"]] = envelope
+        return {
+            "batch_id": mutation["batch_id"],
+            "replayed": False,
+            "projection_pending": False,
+        }
+
+
+class _FakeRdf:
+    def validate_shacl(self, _shapes: str, _data_graph: str) -> dict[str, Any]:
+        return {"conforms": True, "results": []}
 
 
 class _FakeClient:
-    def __init__(self):
-        self.txn = _FakeTxn()
+    def __init__(self) -> None:
+        self.nodes = _FakeNodes()
+        self.changes = _FakeChanges(self.nodes)
+        self.rdf = _FakeRdf()
+
+    @staticmethod
+    def supports(operation: str) -> bool:
+        return operation == "ApplyChangeEnvelope"
 
 
 def test_ingest_entities_writes_nodes_and_edges():
@@ -53,22 +121,21 @@ def test_ingest_entities_writes_nodes_and_edges():
         ],
         [{"source": "a", "target": "b", "relationship": "hostedOnNode"}],
         client=c,
-        graph="__commons__",
     )
     assert res == {"nodes": 2, "edges": 1}
-    assert c.txn.committed is True
-    assert set(c.txn.nodes) == {"a", "b"}
+    assert len(c.changes.applied) == 1
+    assert set(c.nodes.values) == {"a", "b"}
     # provenance is stamped
-    assert c.txn.nodes["a"]["source"] == "technitium-dns-mcp"
-    assert c.txn.nodes["a"]["domain"] == "technitium"
-    assert c.txn.edges == [("a", "b", {"relationship": "hostedOnNode"})]
+    assert c.nodes.values["a"]["source"] == "technitium-dns-mcp"
+    assert c.nodes.values["a"]["domain"] == "technitium"
+    assert c.changes.edges == [("a", "b", {"relationship": "hostedOnNode"})]
 
 
 def test_ingest_entities_rejects_empty_input():
     c = _FakeClient()
     with pytest.raises(NativeIngestError, match="at least one entity"):
         ingest_entities([], client=c)
-    assert c.txn.committed is False
+    assert len(c.changes.applied) == 0
 
 
 def test_ingest_zones_maps_zone_and_node():
@@ -88,20 +155,20 @@ def test_ingest_zones_maps_zone_and_node():
             ]
         },
     }
-    res = ingest_zones(resp, node="dns1", client=c, graph="__commons__")
+    res = ingest_zones(resp, node="dns1", client=c)
     # 2 zones + 1 server node
     assert res == {"nodes": 3, "edges": 2}
-    zone = c.txn.nodes["technitium:zone:home.example"]
+    zone = c.nodes.values["technitium:zone:home.example"]
     assert zone["node_type"] == "DnsZone"
     assert zone["zoneType"] == "Primary"
     assert zone["dnssecStatus"] == "SignedWithNSEC3"
     assert zone["technitiumId"] == "home.example"
-    assert c.txn.nodes["technitium:node:dns1"]["node_type"] == "DnsServerNode"
+    assert c.nodes.values["technitium:node:dns1"]["node_type"] == "DnsServerNode"
     assert (
         "technitium:zone:home.example",
         "technitium:node:dns1",
         {"relationship": "hostedOnNode"},
-    ) in c.txn.edges
+    ) in c.changes.edges
 
 
 def test_ingest_records_maps_records_and_rdata():
@@ -125,19 +192,21 @@ def test_ingest_records_maps_records_and_rdata():
             ]
         }
     }
-    res = ingest_records(resp, "home.example", client=c, graph="__commons__")
+    res = ingest_records(resp, "home.example", client=c)
     assert res == {"nodes": 2, "edges": 2}
-    a_rec = c.txn.nodes["technitium:record:gitlab.home.example|A|0"]
+    a_rec = c.nodes.values["technitium:record:gitlab.home.example|A|0"]
     assert a_rec["node_type"] == "DnsRecord"
     assert a_rec["recordType"] == "A"
     assert a_rec["ttl"] == 3600
-    assert a_rec["recordData"] == "10.0.0.12"
-    cname = c.txn.nodes["technitium:record:www.home.example|CNAME|1"]
+    # native_ingest's governed PII scrubber redacts IPv4-shaped values.
+    assert a_rec["recordData"] == "[REDACTED_IPV4]"
+    cname = c.nodes.values["technitium:record:www.home.example|CNAME|1"]
     assert cname["recordData"] == "gitlab.home.example"
     # each record links back to its zone
     assert all(
-        e[1] == "technitium:zone:home.example" and e[2] == {"relationship": "recordInZone"}
-        for e in c.txn.edges
+        e[1] == "technitium:zone:home.example"
+        and e[2] == {"relationship": "recordInZone"}
+        for e in c.changes.edges
     )
 
 
