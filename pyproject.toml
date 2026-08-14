@@ -47,6 +47,9 @@ technitium-dns-mcp = "technitium_dns_mcp.connectors"
 [project.entry-points."agent_utilities.prompt_providers"]
 technitium-dns-mcp = "technitium_dns_mcp.prompts"
 
+[tool.uv.workspace]
+members = ["."]
+
 [tool.setuptools]
 include-package-data = true
 
