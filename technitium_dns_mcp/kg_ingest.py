@@ -87,7 +87,12 @@ def ingest_zones(
     node_id = f"technitium:node:{node}" if node else None
     if node_id:
         entities.append(
-            {"id": node_id, "node_type": "DnsServerNode", "name": node, "technitiumId": node}
+            {
+                "id": node_id,
+                "node_type": "DnsServerNode",
+                "name": node,
+                "technitiumId": node,
+            }
         )
     for zone in zones:
         if not zone.get("name"):
@@ -158,5 +163,7 @@ def ingest_records(
             "technitiumId": f"{name}|{rtype}",
         }
         entities.append({k: v for k, v in ent.items() if v is not None})
-        relationships.append({"source": rid, "target": zone_id, "relationship": "recordInZone"})
+        relationships.append(
+            {"source": rid, "target": zone_id, "relationship": "recordInZone"}
+        )
     return ingest_entities(entities, relationships, client=client, graph=graph)
