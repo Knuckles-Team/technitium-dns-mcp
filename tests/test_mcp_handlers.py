@@ -5,6 +5,7 @@ from fastmcp import FastMCP
 from technitium_dns_mcp.mcp.mcp_user import register_user_tools
 from technitium_dns_mcp.mcp.mcp_dashboard import register_dashboard_tools
 from technitium_dns_mcp.mcp.mcp_zones import register_zones_tools
+from technitium_dns_mcp.mcp.mcp_dhcp import register_dhcp_tools
 
 
 @pytest.mark.asyncio
@@ -71,3 +72,26 @@ async def test_mcp_zones_handler(mock_ctx):
     )
     assert res == {"status": "ok"}
     mock_client.list_zones.assert_called_once_with(node="n1")
+
+
+@pytest.mark.asyncio
+async def test_mcp_dhcp_handler(mock_ctx):
+    mcp = FastMCP("test-mcp")
+    register_dhcp_tools(mcp)
+
+    tools = await mcp.list_tools()
+    assert "technitium_dns_dhcp" in [t.name for t in tools]
+
+    tool = [t for t in tools if t.name == "technitium_dns_dhcp"][0]
+
+    mock_client = MagicMock()
+    mock_client.list_scopes.return_value = {"status": "ok"}
+
+    res = await tool.fn(
+        action="list_scopes",
+        params_json="{}",
+        client=mock_client,
+        ctx=mock_ctx,
+    )
+    assert res == {"status": "ok"}
+    mock_client.list_scopes.assert_called_once()

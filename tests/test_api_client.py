@@ -376,3 +376,89 @@ def test_api_client_zones_endpoints():
         _, kwargs = mock_request.call_args
         assert "/api/zones/records/delete" in kwargs["url"]
         assert kwargs["data"]["ipAddress"] == "5.6.7.8"
+
+
+@pytest.mark.concept("TDNS-001")
+def test_api_client_dhcp_endpoints():
+    client = Api(base_url="http://localhost:5380", token="test-token")
+
+    with patch.object(client._session, "request") as mock_request:
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.headers = {"Content-Type": "application/json"}
+        mock_response.text = '{"status": "ok"}'
+        mock_response.json.return_value = {"status": "ok"}
+        mock_request.return_value = mock_response
+
+        # Test list_scopes
+        client.list_scopes(node="n1")
+        _, kwargs = mock_request.call_args
+        assert kwargs["method"] == "GET"
+        assert "/api/dhcp/scopes/list" in kwargs["url"]
+        assert kwargs["params"]["node"] == "n1"
+
+        # Test get_scope
+        client.get_scope(name="Homelab")
+        _, kwargs = mock_request.call_args
+        assert "/api/dhcp/scopes/get" in kwargs["url"]
+        assert kwargs["params"]["name"] == "Homelab"
+
+        # Test set_scope
+        client.set_scope(
+            name="Homelab",
+            starting_address="192.168.22.1",
+            ending_address="192.168.22.254",
+            subnet_mask="255.255.255.0",
+            lease_time_days=1,
+            router_address="192.168.22.1",
+            dns_servers="192.168.22.1",
+            ping_check_enabled=True,
+            exclusions="192.168.22.1|192.168.22.199",
+            reserved_leases="Auth|BC:24:11:B5:DF:AE|192.168.22.14|",
+        )
+        _, kwargs = mock_request.call_args
+        assert kwargs["method"] == "POST"
+        assert "/api/dhcp/scopes/set" in kwargs["url"]
+        assert kwargs["data"]["name"] == "Homelab"
+        assert kwargs["data"]["startingAddress"] == "192.168.22.1"
+        assert kwargs["data"]["leaseTimeDays"] == "1"
+        assert kwargs["data"]["pingCheckEnabled"] == "true"
+        assert kwargs["data"]["exclusions"] == "192.168.22.1|192.168.22.199"
+        assert kwargs["data"]["reservedLeases"] == "Auth|BC:24:11:B5:DF:AE|192.168.22.14|"
+
+        # Test enable_scope / disable_scope / delete_scope
+        client.enable_scope(name="Homelab")
+        assert "/api/dhcp/scopes/enable" in mock_request.call_args[1]["url"]
+
+        client.disable_scope(name="Homelab")
+        assert "/api/dhcp/scopes/disable" in mock_request.call_args[1]["url"]
+
+        client.delete_scope(name="Homelab")
+        assert "/api/dhcp/scopes/delete" in mock_request.call_args[1]["url"]
+
+        # Test list_leases
+        client.list_leases(name="Homelab")
+        _, kwargs = mock_request.call_args
+        assert "/api/dhcp/leases/list" in kwargs["url"]
+        assert kwargs["params"]["name"] == "Homelab"
+
+        # Test remove_lease
+        client.remove_lease(name="Homelab", client_identifier="1-BC2411B5DFAE")
+        _, kwargs = mock_request.call_args
+        assert "/api/dhcp/leases/remove" in kwargs["url"]
+        assert kwargs["params"]["clientIdentifier"] == "1-BC2411B5DFAE"
+
+        # Test convert_to_reserved_lease / convert_to_dynamic_lease
+        client.convert_to_reserved_lease(
+            name="Homelab", client_identifier="1-BC2411B5DFAE"
+        )
+        assert (
+            "/api/dhcp/leases/convertToReserved" in mock_request.call_args[1]["url"]
+        )
+
+        client.convert_to_dynamic_lease(
+            name="Homelab", client_identifier="1-BC2411B5DFAE"
+        )
+        assert (
+            "/api/dhcp/leases/convertToDynamic" in mock_request.call_args[1]["url"]
+        )
