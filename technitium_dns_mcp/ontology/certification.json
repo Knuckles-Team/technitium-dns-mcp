@@ -1,7 +1,7 @@
 {
   "api_version": "graphos.io/v1",
   "artifacts": {
-    "connector_manifest.yml": "e27c047b27e469769bb739b89a59f9ab871789b798467ce2bf45ddf9d3c9d73d",
+    "connector_manifest.yml": "8f68db7f0f1675343a7e92a4c244124e74b25fa873c299dfd0f5f5106408c5c0",
     "technitium_dns_mcp/connectors/mcp_source_presets.json": "edc70e44b0e87573a844792e1bbe6975de81c524a03214abc788426b657306de",
     "technitium_dns_mcp/connectors/tool_schema_fingerprints.json": "4597051339743bd7f2f9da0a6dbaba34cf3d1c14c21d0b97cee08faeaeba2b70",
     "technitium_dns_mcp/ontology/fixtures/records.json": "9f46347ce5c5b9aeb90c74a1b965dbeecc902cbddb2796c68eecab32779fb18d",
@@ -18,9 +18,9 @@
     "synthetic_fixture_contract": "passed"
   },
   "compatibility": {
-    "agent_utilities": ">=2.4.0,<3",
+    "agent_utilities": ">=2.5.0,<3",
     "bundle_schema": "2",
-    "epistemic_graph": ">=2.26.0,<3"
+    "epistemic_graph": ">=2.27.0,<3"
   },
   "connector": "technitium-dns-mcp",
   "kind": "ConnectorSourceAttestation",
@@ -32,5 +32,5 @@
   "signer": "UNSIGNED-PREVIEW",
   "signing_public_key": "",
   "status": "source-validated",
-  "validated_at": "2026-08-21T04:30:39Z"
+  "validated_at": "2026-08-26T13:42:55Z"
 }
