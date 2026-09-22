@@ -1,6 +1,6 @@
 """MCP tools for Technitium DNS Authoritative Zones, DNSSEC, and Record operations."""
 
-from typing import Any
+from typing import Any, Literal
 
 from fastmcp import Context, FastMCP
 from fastmcp.dependencies import Depends
@@ -16,7 +16,41 @@ def register_zones_tools(mcp: FastMCP):
 
     @mcp.tool(tags={"zones"})
     async def technitium_dns_zones(
-        action: str = Field(
+        action: Literal[
+            "add_private_key",
+            "add_record",
+            "clone_zone",
+            "convert_to_nsec",
+            "convert_to_nsec3",
+            "convert_zone_type",
+            "create_zone",
+            "delete_private_key",
+            "delete_record",
+            "delete_zone",
+            "disable_zone",
+            "enable_zone",
+            "export_zone",
+            "get_dnssec_properties",
+            "get_ds_info",
+            "get_records",
+            "get_zone_options",
+            "get_zone_permissions",
+            "import_zone",
+            "list_catalog_zones",
+            "list_zones",
+            "publish_all_private_keys",
+            "resync_zone",
+            "retire_dnskey",
+            "rollover_dnskey",
+            "set_zone_options",
+            "set_zone_permissions",
+            "sign_zone",
+            "unsign_zone",
+            "update_dnskey_ttl",
+            "update_nsec3_params",
+            "update_private_key",
+            "update_record",
+        ] = Field(
             description=(
                 "Action to perform. Must be one of: "
                 "'list_zones', 'list_catalog_zones', 'create_zone', 'import_zone', "

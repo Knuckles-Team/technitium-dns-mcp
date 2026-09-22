@@ -125,7 +125,7 @@ sync:
   updated_field: lastModified
   pagination: null
   doc_type: technitium_zone
-  tool_schema_sha256: a1b94c8b1b03d9974358200307721c175a9bf59e4bdfb325566d0319c7c510da
+  tool_schema_sha256: 087b3bfd2bdf8994f543f3de4efe8959e45039b90ddfbae12b93920e11663340
   raw:
     server: technitium-dns-mcp
     tool: technitium_dns_zones
