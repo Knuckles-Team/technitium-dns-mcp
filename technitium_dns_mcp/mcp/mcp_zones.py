@@ -14,7 +14,18 @@ def register_zones_tools(mcp: FastMCP):
     CONCEPT:TD-OS.config.tdns-2
     """
 
-    @mcp.tool(tags={"zones"})
+    @mcp.tool(
+        tags={"zones"},
+        annotations={
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": False,
+            "openWorldHint": True,
+        },
+        meta={
+            "eg.annotations": {"modalities_in": ["text"], "modalities_out": ["text"]}
+        },
+    )
     async def technitium_dns_zones(
         action: Literal[
             "add_private_key",
