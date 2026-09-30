@@ -78,7 +78,9 @@ results in every MCP tool mode. Credential fields (including 2FA secrets and QR
 images) are omitted, including inside nested response objects. Session identifiers
 and other management metadata remain available. Use the Technitium DNS console
 for workflows that need token values or authenticator enrollment. These operations do
-not replace the connector's configured authentication token.
+not replace the connector's configured authentication token. Request failures expose
+only their exception category and operation, without raw URLs, bodies, or chained
+transport exceptions.
 
 ### Environment Variables
 
@@ -121,8 +123,8 @@ not replace the connector's configured authentication token.
 | `DEBUG` | `False` | Verbose logging |
 | `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
 | `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
-| `PROVIDER` | `openai` | LLM provider for the agent |
-| `MODEL_ID` | `gpt-4o` | Model id for the agent |
+| `PROVIDER` | — | Operator-configured LLM provider for the agent |
+| `MODEL_ID` | — | Operator-configured model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
 _10 package + 21 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
@@ -279,13 +281,14 @@ configured secret provider.
 
 <!-- MCP-TOOLS-TABLE:START -->
 
-#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed`)
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `technitium_dns_dashboard` | `DASHBOARDTOOL` | Query Technitium DNS metrics, prometheus stats, category details, or delete statistics. |
 | `technitium_dns_user` | `USERTOOL` | Manage Technitium DNS user sessions, authentication, credentials, and profile settings. |
 | `technitium_dns_zones` | `ZONESTOOL` | Manage Technitium DNS authoritative zones, DNSSEC properties/keys, and perform DNS record CRUD. |
+| `technitium_ingest_zones` | `INGESTTOOL` | Natively ingest Technitium DNS zones (+ their records) into epistemic-graph. |
 
 #### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
 
@@ -302,8 +305,8 @@ configured secret provider.
 | `technitium_dns_convert_to_nsec` | `ZONESTOOL` | Converts proof of non-existence to NSEC. |
 | `technitium_dns_convert_to_nsec3` | `ZONESTOOL` | Converts proof of non-existence to NSEC3. |
 | `technitium_dns_convert_zone_type` | `ZONESTOOL` | Converts zone type. |
-| `technitium_dns_create_single_use_token` | `USERTOOL` | Creates a single-use token. |
-| `technitium_dns_create_token` | `USERTOOL` | Creates an API token for long-term programmatic access. |
+| `technitium_dns_create_single_use_token` | `USERTOOL` | Creates a single-use token; its value is omitted from the result. |
+| `technitium_dns_create_token` | `USERTOOL` | Creates an API token; the token value is omitted from the result. |
 | `technitium_dns_create_zone` | `ZONESTOOL` | Creates a new zone. |
 | `technitium_dns_delete_all_stats` | `DASHBOARDTOOL` | Deletes all statistics from the server. |
 | `technitium_dns_delete_private_key` | `ZONESTOOL` | Deletes a private DNSSEC key. |
@@ -328,10 +331,10 @@ configured secret provider.
 | `technitium_dns_get_zone_options` | `ZONESTOOL` | Gets settings/options of a zone. |
 | `technitium_dns_get_zone_permissions` | `ZONESTOOL` | Gets user/group permissions of a zone. |
 | `technitium_dns_import_zone` | `ZONESTOOL` | Imports zone content from a zone file. |
-| `technitium_dns_initialize_2fa` | `USERTOOL` | Initializes Time-based One-Time Password setup. |
+| `technitium_dns_initialize_2fa` | `USERTOOL` | Initializes 2FA; enroll through the DNS console to retrieve the secret. |
 | `technitium_dns_list_catalog_zones` | `ZONESTOOL` | Lists all catalog zones. |
 | `technitium_dns_list_zones` | `ZONESTOOL` | Lists authoritative zones. |
-| `technitium_dns_login` | `USERTOOL` | Log in to the DNS server to obtain a session token. |
+| `technitium_dns_login` | `USERTOOL` | Log in to the DNS server; credential values are omitted from the result. |
 | `technitium_dns_logout` | `USERTOOL` | Logs out the current session. |
 | `technitium_dns_publish_all_private_keys` | `ZONESTOOL` | Publishes all private DNSSEC keys. |
 | `technitium_dns_resync_zone` | `ZONESTOOL` | Forces authoritative secondary zone resynchronization. |
@@ -349,7 +352,7 @@ configured secret provider.
 
 </details>
 
-_3 action-routed tool(s) (default) · 52 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
+_4 action-routed tool(s) · 52 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (**`intent` default** — the six verb-tools, granular set loaded on demand · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 <!-- GOVERNED-CAPABILITY:START -->

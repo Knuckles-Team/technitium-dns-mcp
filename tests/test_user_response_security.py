@@ -1,4 +1,4 @@
-"""Credential output regression tests; all credentials and transports are fake."""
+# Credential output regression tests use only fake credentials and transports.
 
 import copy
 import json
@@ -96,7 +96,7 @@ def test_sensitive_api_responses_are_copied_and_auth_preserved(client, action, p
 
 @pytest.mark.parametrize("action,params", ACTIONS)
 @pytest.mark.parametrize("content_type", ["text/plain", "application/json"])
-def test_raw_response_never_escapes(client, action, params, content_type):
+def test_raw_response_never_escapes(client, action, params, *, content_type):
     response = set_response(client, {})
     response.headers = {"Content-Type": content_type}
     response.text = 'malformed {"token": "fake-raw-secret"'
@@ -151,7 +151,7 @@ def test_unrelated_download_is_preserved(client):
     ],
 )
 async def test_registered_surfaces_sanitize(
-    client, monkeypatch, action, params, mode, user_enabled, response_kind
+    client, monkeypatch, *, action, params, mode, user_enabled, response_kind
 ):
     monkeypatch.setattr(
         "agent_utilities.core.config.setting",

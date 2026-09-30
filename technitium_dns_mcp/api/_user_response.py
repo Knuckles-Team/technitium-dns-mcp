@@ -1,5 +1,4 @@
-"""Sanitized results for credential-bearing user operations."""
-
+from collections.abc import Callable
 from typing import Any
 
 # Credential-bearing fields in user/session and 2FA responses. Keep identifiers
@@ -27,7 +26,6 @@ _SECRET_FIELDS = frozenset(
 
 
 def _sanitize_user_response(value: Any) -> Any:
-    """Copy a user response without credential fields, including nested objects."""
     if isinstance(value, dict):
         return {
             key: _sanitize_user_response(item)
@@ -40,7 +38,21 @@ def _sanitize_user_response(value: Any) -> Any:
 
 
 def _safe_user_response(response: Any) -> dict[str, Any]:
-    """Fail closed for an unexpected top-level JSON shape; never echo its body."""
     if not isinstance(response, dict):
         return {"error": "Unexpected user API response"}
     return _sanitize_user_response(response)
+
+
+def _safe_user_request(
+    request: Callable[..., Any], method: str, endpoint: str, **kwargs: Any
+) -> dict[str, Any]:
+    try:
+        response = request(method, endpoint, **kwargs)
+    except Exception as error:
+        error_type = type(error).__name__
+    else:
+        return _safe_user_response(response)
+
+    # Raise outside the handler so no original exception, URL, or body remains
+    # attached as a cause/context for MCP's error formatter or server logging.
+    raise RuntimeError(f"User API request failed ({error_type}; {method} {endpoint})")
