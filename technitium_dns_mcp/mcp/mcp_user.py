@@ -33,8 +33,6 @@ def register_user_tools(mcp: FastMCP):
         ctx: Context | None = Field(default=None, description="MCP context"),
     ) -> Any:
         """Manage Technitium DNS user sessions, authentication, credentials, and profile settings."""
-        if ctx:
-            await ctx.info(f"Executing User action '{action}'...")
         import json
 
         try:

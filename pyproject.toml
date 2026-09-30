@@ -82,3 +82,8 @@ override-dependencies = [
 
 [tool.uv.sources]
 agent-utilities = { path = ".uv-workspace-siblings/agent-utilities", editable = true }
+
+[tool.pytest.ini_options]
+markers = [
+    "concept(id): associates a test with an architecture concept",
+]

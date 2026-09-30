@@ -9,6 +9,7 @@
       "env": {
         "MCP_TOOL_MODE": "intent",
         "DASHBOARDTOOL": "True",
+        "INGESTTOOL": "True",
         "USERTOOL": "True",
         "ZONESTOOL": "True"
       }
