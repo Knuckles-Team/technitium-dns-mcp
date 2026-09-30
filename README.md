@@ -94,12 +94,16 @@ transport exceptions.
 | `TECHNITIUM_DNS_TOKEN` | secret-injected | Technitium DNS API Token / SSO Token |
 | `TLS_PROFILE` | `private-pki` | TLS verification is mandatory. Select a named runtime profile from AgentConfig. |
 | `TLS_PROFILES_REF` | `secret://runtime/tls-profiles` |  |
+| `TECHNITIUM_DNS_TLS_PROFILE` | `private-pki` | Optional Technitium-specific named TLS profile override |
+| `TECHNITIUM_DNS_TLS_PROFILE_REF` | `secret://runtime/technitium-dns-tls-profile` | Optional runtime reference to the Technitium-specific TLS profile |
+| `TECHNITIUM_DNS_MCP_AGENT_IMAGE` | `example/technitium-dns-mcp@sha256:<digest>` | Required immutable image reference when validating or running Docker Compose |
 | `TRANSPORT` | `stdio` | MCP transport configuration (streamable-http or stdio) |
 | `HOST` | `0.0.0.0` |  |
 | `PORT` | `8000` |  |
 | `DASHBOARDTOOL` | `True` | These names match the authoritative "Toggle Env Var" column in the README MCP tools table (condensed action-routed surface). |
 | `USERTOOL` | `True` |  |
 | `ZONESTOOL` | `True` |  |
+| `INGESTTOOL` | `True` | Enable the knowledge-graph ingestion tool registrar |
 
 #### Inherited agent-utilities variables (apply to every connector)
 
@@ -127,7 +131,7 @@ transport exceptions.
 | `MODEL_ID` | — | Operator-configured model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_10 package + 21 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_14 package + 21 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
