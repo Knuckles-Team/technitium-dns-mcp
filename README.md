@@ -71,6 +71,15 @@ Deployment recipes (single-node + Raft HA), connection configuration, and archit
 diagrams are documented in the
 [epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
 
+### Credential-bearing user operations
+
+Login, token creation, session information, and 2FA initialization return sanitized
+results in every MCP tool mode. Credential fields (including 2FA secrets and QR
+images) are omitted, including inside nested response objects. Session identifiers
+and other management metadata remain available. Use the Technitium DNS console
+for workflows that need token values or authenticator enrollment. These operations do
+not replace the connector's configured authentication token.
+
 ### Environment Variables
 
 <!-- ENV-VARS-TABLE:START -->

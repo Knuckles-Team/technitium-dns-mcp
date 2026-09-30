@@ -1,5 +1,6 @@
 from typing import Any
 
+from technitium_dns_mcp.api._user_response import _safe_user_response
 from technitium_dns_mcp.api.api_client_base import ApiClientBase
 
 
@@ -15,7 +16,7 @@ class ApiClientUser(ApiClientBase):
         totp: str | None = None,
         include_info: bool | None = None,
     ) -> dict[str, Any]:
-        """Log in to the DNS server to obtain a session token.
+        """Log in to the DNS server; credential values are omitted from the result.
 
         Args:
             user: Username.
@@ -28,7 +29,7 @@ class ApiClientUser(ApiClientBase):
             data["totp"] = totp
         if include_info is not None:
             data["includeInfo"] = str(include_info).lower()
-        return self.request("POST", "/api/user/login", data=data)
+        return _safe_user_response(self.request("POST", "/api/user/login", data=data))
 
     def create_token(
         self,
@@ -37,7 +38,7 @@ class ApiClientUser(ApiClientBase):
         token_name: str,
         totp: str | None = None,
     ) -> dict[str, Any]:
-        """Creates an API token for long-term programmatic access.
+        """Creates an API token; the token value is omitted from the result.
 
         Args:
             user: Username.
@@ -48,11 +49,15 @@ class ApiClientUser(ApiClientBase):
         data = {"user": user, "pass": password, "tokenName": token_name}
         if totp is not None:
             data["totp"] = totp
-        return self.request("POST", "/api/user/createToken", data=data)
+        return _safe_user_response(
+            self.request("POST", "/api/user/createToken", data=data)
+        )
 
     def create_single_use_token(self) -> dict[str, Any]:
-        """Creates a single-use token."""
-        return self.request("POST", "/api/user/createSingleUseToken")
+        """Creates a single-use token; its value is omitted from the result."""
+        return _safe_user_response(
+            self.request("POST", "/api/user/createSingleUseToken")
+        )
 
     def logout(self) -> dict[str, Any]:
         """Logs out the current session."""
@@ -60,7 +65,7 @@ class ApiClientUser(ApiClientBase):
 
     def get_session_info(self) -> dict[str, Any]:
         """Gets info about the current session."""
-        return self.request("GET", "/api/user/session/get")
+        return _safe_user_response(self.request("GET", "/api/user/session/get"))
 
     def delete_user_session(self, partial_token: str) -> dict[str, Any]:
         """Deletes a specific user session token.
@@ -94,8 +99,8 @@ class ApiClientUser(ApiClientBase):
         return self.request("POST", "/api/user/changePassword", data=data)
 
     def initialize_2fa(self) -> dict[str, Any]:
-        """Initializes Time-based One-Time Password setup."""
-        return self.request("POST", "/api/user/2fa/init")
+        """Initializes 2FA; enroll through the DNS console to retrieve the secret."""
+        return _safe_user_response(self.request("POST", "/api/user/2fa/init"))
 
     def enable_2fa(self, totp: str) -> dict[str, Any]:
         """Enables 2FA with the provided TOTP code.
