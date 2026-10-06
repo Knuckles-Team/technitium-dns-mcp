@@ -58,15 +58,33 @@ class ApiClientBase:
                 if isinstance(data, dict) and "token" not in data:
                     data["token"] = self.token
 
-        response = self._session.request(
-            method=method,
-            url=url,
-            headers=req_headers,
-            params=params,
-            data=data,
-            files=files,
-        )
+        try:
+            response = self._session.request(
+                method=method,
+                url=url,
+                headers=req_headers,
+                params=params,
+                data=data,
+                files=files,
+            )
+        except Exception as error:
+            error_type = type(error)
+        else:
+            return self._read_response(response)
 
+        # Raised outside the handler, not re-raised from inside the except
+        # block: the request URL carries the configured bearer token in GET
+        # query parameters, and transport-level failures (connection/timeout/
+        # TLS errors) embed the full URL -- and therefore the token -- in
+        # their message. This is the one chokepoint every endpoint across
+        # every tool domain (user, zones, dashboard, ...) shares, so fixing
+        # it here, rather than per call site, is what keeps the token out of
+        # MCP's error formatter and server logging everywhere, not only on
+        # the user-domain calls that separately re-sanitize their response
+        # bodies in `_user_response.py`.
+        raise error_type(f"{error_type.__name__} during {method} {endpoint}")
+
+    def _read_response(self, response: Any) -> Any:
         if response.status_code >= 400:
             raise Exception(f"API error: {response.status_code}")
 
