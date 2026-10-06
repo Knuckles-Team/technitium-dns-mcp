@@ -285,23 +285,3 @@ this repo (fleet-wide edict, propagated from `agent-utilities/AGENTS.md`).
    default-on unless it genuinely costs compute, in which case it is policy-selected,
    never flag-gated. An opt-in extra or a dependency-conflict fork is an interim state
    that must carry a written plan to become the default, never a resting place.
-
-## Release dependency readiness
-
-Index readiness is a release-only check: run
-`pre-commit run dependency-readiness --hook-stage manual --all-files` before
-release. Ordinary pre-push keeps its existing code, test, quality and security
-gates; it does not establish public-index availability.
-
-The package publisher and dependent container publisher are pinned to pipelines
-`b83db898b6638e379e0c4d6713214aa27fe27f2a` (2.0.2 plus the PR 8 release guard).
-Package publication must prove the exact wheel for `base`, `mcp`, `agent` and
-`all` against public PyPI before upload or release. Container publication retains
-its successful-package-publication prerequisite; it must not use `always()` or
-otherwise bypass that job. Documentation-only publishers do not publish runtime
-packages. A new package/container publication path requires the same audit.
-
-Passing ordinary pushes is not release readiness. Preserve runtime dependency
-floors, native test requirements and signed capability metadata. Missing native
-kernels, invalid signatures, unavailable public dependencies or missing checker
-evidence remain blockers; source-based code validation cannot replace them.
