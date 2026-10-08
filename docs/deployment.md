@@ -116,7 +116,7 @@ set:
 
 Plus `HOST` / `PORT` / `TRANSPORT` for HTTP transports. Copy
 [`.env.example`](https://github.com/Knuckles-Team/technitium-dns-mcp/blob/main/.env.example)
-to `.env` and populate the values you use; the server remains inactive when
+to `.env` and populate the values the operator use; the server remains inactive when
 `TECHNITIUM_DNS_TOKEN` is absent.
 
 ## Docker Compose
@@ -192,7 +192,7 @@ services:
 
 ## Behind a Caddy reverse proxy
 
-Expose the HTTP server on a hostname with automatic TLS. Add to your `Caddyfile`:
+Expose the HTTP server on a hostname with automatic TLS. Add to the operator's `Caddyfile`:
 
 ```caddy
 # Internal (self-signed) — homelab .example.invalid zone
@@ -236,7 +236,7 @@ without hand-rolling `curl`.
 
 ## Register with an MCP client
 
-Add to your client's `mcp_config.json` (multiplexer nickname `td`):
+Add to the operator's client's `mcp_config.json` (multiplexer nickname `td`):
 
 ```json
 {

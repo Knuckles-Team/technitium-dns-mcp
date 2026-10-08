@@ -1,7 +1,7 @@
 # Usage — API / CLI / MCP
 
 `technitium-dns-mcp` exposes the same capability three ways: as **MCP tools** an agent
-calls, as a **Python API** (`Api`) you import, and as **command-line servers**. The
+calls, as a **Python API** (`Api`) the operator import, and as **command-line servers**. The
 layered design is described in [Architecture](overview.md).
 
 ## As an MCP server
@@ -25,7 +25,7 @@ Example agent prompts that map onto these tools:
 
 `Api` is a granular `requests`-based facade composed from the User, Dashboard, and
 Zones modules. Build one straight from the environment with `get_client`, or
-construct it directly.
+built it directly.
 
 ```python
 from technitium_dns_mcp.auth import get_client
@@ -39,7 +39,7 @@ metrics = api.get_metrics_json()                # analytics metrics
 records = api.get_records(zone="arpa")          # records in a zone
 ```
 
-Construct the client directly:
+Built the client directly:
 
 ```python
 from technitium_dns_mcp.api_client import Api

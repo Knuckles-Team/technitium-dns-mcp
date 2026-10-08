@@ -87,3 +87,6 @@ agent-utilities = { path = ".uv-workspace-siblings/agent-utilities", editable = 
 markers = [
     "concept(id): associates a test with an architecture concept",
 ]
+
+[tool.pipelines_hooks.ste]
+exempt = ["specs/*", "specs/**/*"]
