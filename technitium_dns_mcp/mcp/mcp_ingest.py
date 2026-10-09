@@ -40,9 +40,7 @@ def register_ingest_tools(mcp: FastMCP):
         """
         import json
 
-        from agent_utilities.knowledge_graph.memory.native_ingest import (
-            NativeIngestError,
-        )
+        from agent_connector_sdk.ingest import IngestError
 
         from technitium_dns_mcp.kg_ingest import ingest_records, ingest_zones
 
@@ -59,7 +57,7 @@ def register_ingest_tools(mcp: FastMCP):
             await ctx.info("Ingesting Technitium DNS zones into the knowledge graph...")
 
         zones_resp = client.list_zones(node=node) if node else client.list_zones()
-        zone_result = ingest_zones(zones_resp, node=node)
+        zone_result = await ingest_zones(zones_resp, node=node)
 
         record_results: dict[str, Any] = {}
         if include_records:
@@ -79,8 +77,8 @@ def register_ingest_tools(mcp: FastMCP):
                     recs = client.get_records(
                         domain=name, zone=name, list_zone=True, node=node
                     )
-                    record_results[name] = ingest_records(recs, name, node=node)
-                except NativeIngestError:
+                    record_results[name] = await ingest_records(recs, name, node=node)
+                except IngestError:
                     raise
                 except Exception as e:  # noqa: BLE001 — isolate source API failures
                     if ctx:
