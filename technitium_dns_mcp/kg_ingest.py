@@ -1,41 +1,70 @@
 """Native epistemic-graph ingestion for Technitium DNS records.
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. Connector-specific mappers emit
-canonical node_type nodes and relationship edges. The required agent-utilities
-native-ingest primitive owns the transaction and raises NativeIngestError when the
-authoritative engine cannot commit.
+canonical node_type nodes and relationship edges through the
+``agent_connector_sdk.ingest`` knowledge-ingest facade, which owns the transaction
+and raises ``IngestError`` when the authoritative engine cannot commit.
 """
 
 from __future__ import annotations
 
 from typing import Any
 
-from agent_utilities.knowledge_graph.memory.native_ingest import (
-    ingest_entities as _native_ingest_entities,
+from agent_connector_sdk.ingest import (
+    ChangeSet,
+    Entity,
+    IngestBinding,
+    IngestError,
+    KnowledgeIngest,
+    Relationship,
+    current_ingest,
 )
 
 _SOURCE = "technitium-dns-mcp"
 _DOMAIN = "technitium"
+_BINDING = IngestBinding(connector=_SOURCE, stream=_DOMAIN)
 
 
-def ingest_entities(
+def _to_entity(record: dict[str, Any]) -> Entity:
+    return Entity(
+        id=record.get("id"),
+        node_type=record.get("node_type"),
+        properties={
+            k: v for k, v in record.items() if k not in ("id", "node_type")
+        },
+    )
+
+
+def _to_relationship(record: dict[str, Any]) -> Relationship:
+    properties = {
+        k: v
+        for k, v in record.items()
+        if k not in ("source", "target", "relationship")
+    }
+    return Relationship(
+        source=record["source"],
+        target=record["target"],
+        relationship=record["relationship"],
+        properties=properties or None,
+    )
+
+
+async def ingest_entities(
     entities: list[dict[str, Any]],
     relationships: list[dict[str, Any]] | None = None,
     *,
-    source: str = _SOURCE,
-    domain: str = _DOMAIN,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
-    """Write canonical typed nodes and relationships through agent-utilities."""
-    return _native_ingest_entities(
-        entities,
-        relationships,
-        source=source,
-        domain=domain,
-        client=client,
-        graph=graph,
+    """Write canonical typed nodes and relationships in one change set."""
+    if not entities:
+        raise IngestError("ingest_entities needs at least one entity")
+    change_set = ChangeSet(
+        entities=tuple(_to_entity(e) for e in entities),
+        relationships=tuple(_to_relationship(r) for r in relationships or ()),
     )
+    service = ingest or current_ingest()
+    receipt = await service.submit(_BINDING, change_set)
+    return {"nodes": receipt.affected_count, "edges": receipt.relationship_count}
 
 
 def _unwrap(resp: Any, key: str) -> list[dict[str, Any]]:
@@ -73,12 +102,11 @@ def _zone_entity(zone: dict[str, Any], node: str | None) -> dict[str, Any]:
     return {k: v for k, v in ent.items() if v is not None}
 
 
-def ingest_zones(
+async def ingest_zones(
     zones_resp: Any,
     *,
     node: str | None = None,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
     """Map a ``list_zones`` response → ``:DnsZone`` (+ ``:DnsServerNode``) nodes and ingest."""
     zones = _unwrap(zones_resp, "zones")
@@ -103,7 +131,7 @@ def ingest_zones(
             relationships.append(
                 {"source": ent["id"], "target": node_id, "relationship": "hostedOnNode"}
             )
-    return ingest_entities(entities, relationships, client=client, graph=graph)
+    return await ingest_entities(entities, relationships, ingest=ingest)
 
 
 def _render_rdata(rec: dict[str, Any]) -> str | None:
@@ -132,13 +160,12 @@ def _render_rdata(rec: dict[str, Any]) -> str | None:
     return str(rdata)
 
 
-def ingest_records(
+async def ingest_records(
     records_resp: Any,
     zone: str,
     *,
     node: str | None = None,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
     """Map a ``get_records`` response → ``:DnsRecord`` nodes (+ ``:recordInZone``) and ingest."""
     records = _unwrap(records_resp, "records")
@@ -166,4 +193,4 @@ def ingest_records(
         relationships.append(
             {"source": rid, "target": zone_id, "relationship": "recordInZone"}
         )
-    return ingest_entities(entities, relationships, client=client, graph=graph)
+    return await ingest_entities(entities, relationships, ingest=ingest)

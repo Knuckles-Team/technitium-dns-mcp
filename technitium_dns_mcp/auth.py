@@ -1,15 +1,14 @@
 """CONCEPT:TD-OS.identity.tdns Identity credentials loader and session manager."""
 
-from agent_utilities.base_utilities import get_logger
-from agent_utilities.core.config import setting
-from agent_utilities.core.transport_security import (
-    ResolvedTLSProfile,
-    resolve_configured_tls_profile,
-)
+import logging
+
+from agent_connector_sdk.config import setting
+from agent_connector_sdk.tls.profile import ResolvedTLSProfile
+from agent_connector_sdk.tls.resolve import resolve_tls_profile
 
 from technitium_dns_mcp.api_client import Api
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def get_client(tls_profile: ResolvedTLSProfile | None = None) -> Api:
@@ -22,5 +21,5 @@ def get_client(tls_profile: ResolvedTLSProfile | None = None) -> Api:
     return Api(
         base_url=base_url,
         token=token,
-        tls_profile=tls_profile or resolve_configured_tls_profile("technitium_dns"),
+        tls_profile=tls_profile or resolve_tls_profile("technitium_dns"),
     )
