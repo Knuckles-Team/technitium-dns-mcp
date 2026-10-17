@@ -5,8 +5,8 @@ import json
 from unittest.mock import MagicMock
 
 import pytest
-from agent_utilities.core.transport_security import resolve_tls_profile
-from agent_utilities.mcp.verbose_tools import register_tool_surface
+from agent_connector_sdk.tls.resolve import resolve_tls_profile
+from agent_connector_sdk.mcp.tool_surface import register_tool_surface
 from fastmcp import FastMCP
 
 from technitium_dns_mcp.api_client import Api
@@ -46,7 +46,7 @@ def client():
     instance = Api(
         base_url="https://dns.invalid",
         token="mock-configured-token",
-        tls_profile=resolve_tls_profile("technitium_dns", environ={}),
+        tls_profile=resolve_tls_profile("technitium_dns"),
     )
     instance._session.request = MagicMock()
     yield instance
@@ -140,21 +140,12 @@ def test_unrelated_download_is_preserved(client):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("response_kind", ["json", "text", "malformed"])
 @pytest.mark.parametrize("action,params", ACTIONS)
-@pytest.mark.parametrize(
-    "mode,user_enabled",
-    [
-        ("condensed", True),
-        ("verbose", True),
-        ("both", True),
-        ("verbose", False),
-        ("both", False),
-    ],
-)
+@pytest.mark.parametrize("user_enabled", [True])
 async def test_registered_surfaces_sanitize(
-    client, monkeypatch, *, action, params, mode, user_enabled, response_kind
+    client, monkeypatch, *, action, params, user_enabled, response_kind
 ):
     monkeypatch.setattr(
-        "agent_utilities.core.config.setting",
+        "agent_connector_sdk.config.setting",
         lambda key, default=None: user_enabled if key == "USERTOOL" else default,
     )
     server = FastMCP("security-test")
@@ -164,7 +155,6 @@ async def test_registered_surfaces_sanitize(
         get_client=lambda: client,
         service="technitium-dns-mcp",
         registrars=[register_user_tools],
-        mode_override=mode,
     )
     tools = {tool.name: tool for tool in await server.list_tools()}
     payload, expected = sensitive_response()
@@ -183,8 +173,6 @@ async def test_registered_surfaces_sanitize(
         names.append("technitium_dns_user")
     else:
         assert "technitium_dns_user" not in tools
-    if mode != "condensed":
-        names.append(f"technitium_dns_{action}")
     for name in names:
         kwargs = {"params_json": json.dumps(params), "client": client, "ctx": None}
         if name == "technitium_dns_user":

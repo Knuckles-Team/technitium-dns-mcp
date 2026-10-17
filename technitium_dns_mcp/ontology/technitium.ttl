@@ -117,7 +117,7 @@
 
 <http://knuckles.team/kg/technitium> a owl:Ontology ;
     rdfs:label "Technitium DNS Ontology" ;
-    rdfs:comment """Technitium DNS domain extensions federated into the agent-utilities
+    rdfs:comment """Technitium DNS domain extensions federated into the agent-connector-sdk
     knowledge-graph hub: authoritative zones, records, DNSSEC keys, and the server node
     that hosts them.""" ;
     owl:imports <http://knuckles.team/kg> .

@@ -1,8 +1,8 @@
 {
-  "algorithm": "agent-utilities:mcp-tool-schema-compat:v1",
+  "algorithm": "agent-connector-sdk:mcp-tool-contract-compat:v2",
   "connector": "technitium-dns-mcp",
   "schema_version": "1",
   "tools": {
-    "technitium_dns_zones": "a1b94c8b1b03d9974358200307721c175a9bf59e4bdfb325566d0319c7c510da"
+    "technitium_dns_zones": "6c86f687a5e55222494dc041cbe10c8eadea1a61e9c53569226598d5c349ff04"
   }
 }
