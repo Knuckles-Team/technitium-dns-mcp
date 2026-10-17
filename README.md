@@ -7,15 +7,12 @@
 > interfaces, and guidance for provisioning the Technitium DNS Server are maintained
 > in the [official documentation](https://knuckles-team.github.io/technitium-dns-mcp/).
 
-A production-grade Model Context Protocol (MCP) server and graph-based Pydantic AI agent integration for **Technitium DNS Server**. Exposes complete, 100% covered REST API endpoints for user SSO, analytics metrics, authoritative zones, DNSSEC, and dynamic DNS record operations.
-
 ---
 
 ## 🚀 Key Features
 
 - **100% API Coverage**: Complete mapping of Technitium User/SSO, Dashboard Analytics, Zone Management, DNSSEC, and Record Actions.
 - **FastMCP Protocol Integration**: Dynamically registers stdio and streamable-http endpoints for large-scale AI tool discovery.
-- **Autonomous Agent Layer**: Bundled with a Pydantic AI Agent that operates natively using advanced instruction graphs and local toolchains.
 - **Strict Compliance**: Designed in accordance with standard codebase-wide architectural patterns (`agent-packages`).
 
 ---
@@ -24,7 +21,6 @@ A production-grade Model Context Protocol (MCP) server and graph-based Pydantic 
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `technitium-dns-mcp[mcp]` to add
 > FastMCP / FastAPI through `agent-connector-sdk`; the required Agent Connector SDK core
-> still carries `epistemic-graph[full]`. The `[agent]` extra also
 > enables model orchestration.
 
 Pick the extra that matches what the operator want to run:
@@ -32,7 +28,6 @@ Pick the extra that matches what the operator want to run:
 | Extra | Installs | Use when |
 |-------|----------|----------|
 | `technitium-dns-mcp[mcp]` | Connector-focused MCP server (`agent-connector-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
-| `technitium-dns-mcp[agent]` | Agent runtime (`agent-connector-sdk` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
 | `technitium-dns-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
@@ -40,31 +35,26 @@ Pick the extra that matches what the operator want to run:
 uv pip install "technitium-dns-mcp[mcp]"
 
 # Agent runtime (adds model orchestration to the shared graph engine)
-uv pip install "technitium-dns-mcp[agent]"
 
 # Everything (development)
 uv pip install "technitium-dns-mcp[all]"      # or: python -m pip install "technitium-dns-mcp[all]"
 ```
 
-### Container images (`:mcp` vs `:agent`)
+### Container images (`:mcp`)
 
-One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
+One multi-stage `docker/Dockerfile` builds the MCP-only image (`--target mcp`):
 
 | Image tag | Build target | Contents | Entrypoint |
 |-----------|--------------|----------|------------|
 | `example/technitium-dns-mcp:mcp` | `--target mcp` | `technitium-dns-mcp[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `technitium-dns-mcp` |
-| `example/technitium-dns-mcp@sha256:<digest>` | `--target agent` (default) | `technitium-dns-mcp[agent]` — **agent runtime**, model orchestration + `epistemic-graph[full]` | `technitium-dns-agent` |
 
 ```bash
 docker build --target mcp   -t example/technitium-dns-mcp:mcp    docker/   # connector-focused MCP server
-docker build --target agent -t example/technitium-dns-mcp:agent-local docker/   # agent runtime
 ```
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
 Agent Connector SDK core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
-the server connector-focused; `[agent]` also enables model orchestration. Local
 deployments can use the bundled engine. For production or shared state, run
 **epistemic-graph as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
@@ -96,7 +86,6 @@ transport exceptions.
 | `TLS_PROFILES_REF` | `secret://runtime/tls-profiles` |  |
 | `TECHNITIUM_DNS_TLS_PROFILE` | `private-pki` | Optional Technitium-specific named TLS profile override |
 | `TECHNITIUM_DNS_TLS_PROFILE_REF` | `secret://runtime/technitium-dns-tls-profile` | Optional runtime reference to the Technitium-specific TLS profile |
-| `TECHNITIUM_DNS_MCP_AGENT_IMAGE` | `example/technitium-dns-mcp@sha256:<digest>` | Required immutable image reference when validating or running Docker Compose |
 | `TRANSPORT` | `stdio` | MCP transport configuration (streamable-http or stdio) |
 | `HOST` | `0.0.0.0` |  |
 | `PORT` | `8000` |  |
@@ -129,11 +118,9 @@ transport exceptions.
 | `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
 | `PROVIDER` | — | Operator-configured LLM provider for the agent |
 | `MODEL_ID` | — | Operator-configured model id for the agent |
-| `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
 _14 package + 21 inherited variable(s). Auto-generated from `.env.example` + the shared agent-connector-sdk set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
-
 
 Every variable the server reads, grouped by purpose. See [`.env.example`](.env.example)
 for a copy-paste starting point.
@@ -161,15 +148,6 @@ Each action-routed tool can be disabled individually via its toggle env var (set
 `DASHBOARDTOOL`, `USERTOOL`, `ZONESTOOL` — see the
 [Available MCP Tools](#available-mcp-tools) table below.
 
-#### Agent runtime (full `[agent]` runtime only)
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `MCP_URL` | URL of the MCP server the agent connects to | `http://localhost:8000/mcp` |
-| `PROVIDER` | LLM provider (e.g. `openai`) | `openai` |
-| `MODEL_ID` | Model id (e.g. `gpt-4o`) | `gpt-4o` |
-
----
-
 ## ⚙️ Dynamic Tool Selection & Visibility
 
 This MCP server supports dynamic toolset selection and visibility filtering at runtime. This allows the operator to restrict the set of exposed tools to prevent blowing up the LLM's context window.
@@ -189,7 +167,6 @@ The operator can configure tool filtering via multiple input channels:
 
 When query strings or parameters are provided, an LLM-free **Knowledge Graph resolution layer** (using `DynamicToolOrchestrator`) matches query intents against known tool tags, names, or descriptions, with safe fallback and automated 24-hour background cache refreshing.
 
-
 ---
 
 ## 🖥️ Running the Servers
@@ -205,14 +182,6 @@ Or start a streamable HTTP server:
 ```bash
 TRANSPORT=streamable-http HOST=0.0.0.0 PORT=8000 technitium-dns-mcp
 ```
-
-### Run Pydantic AI Agent
-
-```bash
-technitium-dns-agent --mcp-url http://localhost:8000
-```
-
----
 
 ## 🧪 Running Tests
 
@@ -233,7 +202,6 @@ is the recommended reference for installation, deployment, and day-to-day operat
 | Page | Contents |
 |---|---|
 | [Installation](https://knuckles-team.github.io/technitium-dns-mcp/installation/) | pip, source, extras, prebuilt Docker image |
-| [Deployment](https://knuckles-team.github.io/technitium-dns-mcp/deployment/) | run the MCP and agent servers, Compose, Caddy + Technitium, env config |
 | [Usage](https://knuckles-team.github.io/technitium-dns-mcp/usage/) | the MCP tools, the `Api` client, the CLI |
 | [Backing Platform](https://knuckles-team.github.io/technitium-dns-mcp/platform/) | deploy Technitium DNS Server with Docker |
 | [Overview](https://knuckles-team.github.io/technitium-dns-mcp/overview/) | the layered API / MCP / agent architecture |
@@ -258,7 +226,6 @@ the detailed transport contract.
   `MCP_ALLOWED_HOSTS` in `AgentConfig`.
 <!-- END GENERATED: additional-deployment-options -->
 
-
 <!-- BEGIN agent-connector-sdk-deployment (generated; do not edit between markers) -->
 
 ## Deploy with `agent-connector-sdk-deployment`
@@ -272,7 +239,6 @@ to **"deploy `technitium-dns-mcp` with agent-connector-sdk-deployment"**.
 | Install mode | Command |
 |------|---------|
 | Installed package | `uv tool install "technitium-dns-mcp[mcp]"`, then run `technitium-dns-mcp` |
-| Editable source | `uv pip install -e ".[agent]"`, then run `technitium-dns-mcp` |
 | Immutable container | deploy `registry.example.invalid/technitium-dns-mcp@sha256:<digest>` through the operator-selected orchestrator |
 
 The repository embeds no deployment profile, credential value, certificate path, or

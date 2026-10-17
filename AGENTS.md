@@ -41,55 +41,6 @@ pytest -v
 ## Project Structure
 
 ### File Tree
-```text
-.
-├── .bumpversion.cfg
-├── .gitignore
-├── AGENTS.md
-├── CHANGELOG.md
-├── LICENSE
-├── README.md
-├── pyproject.toml
-├── requirements.txt
-├── docs
-│   ├── concepts.md
-│   ├── index.md
-│   └── overview.md
-├── docker
-│   ├── Dockerfile
-│   └── compose.yml
-├── prompts
-│   └── main_agent.md
-├── tests
-│   ├── conftest.py
-│   ├── test_agent_integration.py
-│   ├── test_api_client.py
-│   ├── test_auth.py
-│   ├── test_concept_parity.py
-│   ├── test_init_dynamics.py
-│   ├── test_mcp_handlers.py
-│   └── test_startup.py
-└── technitium_dns_mcp
-    ├── __init__.py
-    ├── __main__.py
-    ├── agent_server.py
-    ├── api_client.py
-    ├── auth.py
-    ├── models.py
-    ├── mcp_config.json
-    ├── api
-    │   ├── __init__.py
-    │   ├── api_client_base.py
-    │   ├── api_client_dashboard.py
-    │   ├── api_client_user.py
-    │   └── api_client_zones.py
-    ├── mcp
-    │   ├── __init__.py
-    │   ├── mcp_dashboard.py
-    │   ├── mcp_user.py
-    │   └── mcp_zones.py
-    └── mcp_server.py
-```
 
 ## Concept Registry
 

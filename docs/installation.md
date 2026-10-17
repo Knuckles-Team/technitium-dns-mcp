@@ -22,7 +22,6 @@ The base install is intentionally minimal. Install the extra for what the operat
 | Extra | Install | Pulls in |
 |---|---|---|
 | `mcp` | `pip install "technitium-dns-mcp[mcp]"` | FastMCP MCP-server runtime (`agent-connector-sdk`) |
-| `agent` | `pip install "technitium-dns-mcp[agent]"` | Pydantic-AI agent + Logfire tracing |
 | `all` | `pip install "technitium-dns-mcp[all]"` | Everything above |
 | `test` | `pip install "technitium-dns-mcp[test]"` | `pytest`, `pytest-asyncio`, `pytest-cov`, `pytest-xdist` |
 

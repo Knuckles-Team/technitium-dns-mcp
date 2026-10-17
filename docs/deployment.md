@@ -68,7 +68,6 @@ name with Technitium. To provision the **Technitium DNS Server** it connects to,
 [Backing Platform](platform.md).
 
 > `technitium-dns-mcp` ships **two** console scripts: an **MCP server**
-> (`technitium-dns-mcp`) and a **Pydantic AI agent** (`technitium-dns-agent`). The MCP
 > server is a typed, deterministic tool surface; the agent connects to it and drives
 > the tools autonomously.
 
@@ -157,22 +156,8 @@ docker compose -f docker/mcp.compose.yml up -d
 docker compose -f docker/mcp.compose.yml logs -f
 ```
 
-## Agent server
-
-The Pydantic AI agent (`technitium-dns-agent`) connects to a running MCP server and
-drives its tools. Point it at the MCP server with `--mcp-url`:
-
-```bash
-technitium-dns-agent --mcp-url http://localhost:8000 --host 0.0.0.0 --port 8080
-```
-
-A container recipe mirrors the MCP service, wiring `MCP_URL` to the MCP server by
-container name and publishing the agent on `:8080`:
-
-```yaml
 # docker/agent.compose.yml
 services:
-  technitium-dns-agent:
     image: example/technitium-dns-mcp@sha256:<digest>
     container_name: technitium-dns-agent
     hostname: technitium-dns-agent
