@@ -10,8 +10,6 @@ from agent_connector_sdk.mcp.tool_surface import register_tool_surface
 from fastmcp import Client, FastMCP
 from test_user_response_security import ACTIONS, client
 
-from technitium_dns_mcp.mcp.mcp_user import register_user_tools
-
 
 @pytest.fixture(
     params=[
@@ -71,7 +69,6 @@ def served_tool(failing_client, monkeypatch):
         client_cls=type(failing_client),
         get_client=lambda: failing_client,
         service="technitium-dns-mcp",
-        registrars=[register_user_tools],
     )
     return server
 
@@ -82,8 +79,8 @@ async def test_call_tool_never_exposes_transport_secrets(
     served_tool, caplog, capsys, *, action, params
 ):
     server = served_tool
-    name = "technitium_dns_user"
-    arguments = {"params_json": json.dumps(params), "action": action}
+    name = f"technitium_dns_{action}"
+    arguments = params
     async with Client(server) as mcp_client:
         result = await mcp_client.call_tool(name, arguments, raise_on_error=False)
     assert result.is_error
