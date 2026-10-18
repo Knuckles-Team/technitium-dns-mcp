@@ -2,7 +2,7 @@
   "schema_version": 2,
   "spec_id": "CONN-TECHNITIUM-DNS-MCP",
   "owner_repo": "technitium-dns-mcp",
-  "delivery_state": "SPECIFIED",
+  "delivery_state": "VERIFIED",
   "requirement_ids": [
     "CONN-TECHNITIUM-DNS-MCP-R001"
   ],
@@ -10,9 +10,13 @@
     {
       "id": "CONN-TECHNITIUM-DNS-MCP-R001",
       "title": "Declare the `zones` source",
-      "delivery_state": "SPECIFIED",
-      "landed_in": [],
-      "verified_by": []
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "425958bd488a"
+      ],
+      "verified_by": [
+        "tests/test_ingest_sources.py:17"
+      ]
     }
   ]
 }
