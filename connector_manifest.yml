@@ -116,8 +116,8 @@ schema_mappings:
 sync:
 - preset: technitium-zones
   server: technitium-dns-mcp
-  tool: technitium_dns_zones
-  action: list_zones
+  tool: technitium_dns_list_zones
+  action: null
   records_path: response.zones
   id_field: name
   title_field: name
@@ -125,14 +125,11 @@ sync:
   updated_field: lastModified
   pagination: null
   doc_type: technitium_zone
-  tool_schema_sha256: 6c86f687a5e55222494dc041cbe10c8eadea1a61e9c53569226598d5c349ff04
+  tool_schema_sha256: eb1f4d5bbb83800de42ca7008002d230e694f6e8cfc0fa966e885f4acf783a23
   raw:
     server: technitium-dns-mcp
-    tool: technitium_dns_zones
-    action: list_zones
-    params:
-      action: list_zones
-      params_json: '{}'
+    tool: technitium_dns_list_zones
+    params_style: args
     records_path: response.zones
     id_field: name
     title_field: name
