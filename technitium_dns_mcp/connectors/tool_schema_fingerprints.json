@@ -3,6 +3,6 @@
   "connector": "technitium-dns-mcp",
   "schema_version": "1",
   "tools": {
-    "technitium_dns_zones": "6c86f687a5e55222494dc041cbe10c8eadea1a61e9c53569226598d5c349ff04"
+    "technitium_dns_list_zones": "eb1f4d5bbb83800de42ca7008002d230e694f6e8cfc0fa966e885f4acf783a23"
   }
 }
