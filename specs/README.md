@@ -12,4 +12,4 @@ Read the existing specs first. Extend the spec that owns the behavior. Create a 
 
 ## Local specifications
 
-This repository has no local spec yet.
+- [`CONN-TECHNITIUM-DNS-MCP`](technitium-dns-mcp/spec.md) — Technitium DNS ingestible source declarations.
