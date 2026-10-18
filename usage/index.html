@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Technitium DNS Server API + MCP Server and Agent — authoritative-zone, record, analytics, and account management for the agent-utilities ecosystem.">
+        <meta name="description" content="Technitium DNS Server API + MCP Server and Agent — authoritative-zone, record, analytics, and account management for the agent-connector-sdk ecosystem.">
       
       
       
@@ -914,9 +914,6 @@ built it directly.</p>
 <p>Run the <strong>MCP server</strong> (stdio by default, or an HTTP transport):</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>technitium-dns-mcp
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nv">TRANSPORT</span><span class="o">=</span>streamable-http<span class="w"> </span><span class="nv">HOST</span><span class="o">=</span><span class="m">0</span>.0.0.0<span class="w"> </span><span class="nv">PORT</span><span class="o">=</span><span class="m">8000</span><span class="w"> </span>technitium-dns-mcp
-</span></code></pre></div>
-<p>Run the <strong>Pydantic AI agent</strong> against a running MCP server:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>technitium-dns-agent<span class="w"> </span>--mcp-url<span class="w"> </span>http://localhost:8000
 </span></code></pre></div>
 <p>See <a href="../deployment/">Deployment</a> for transports, environment configuration, and the
 container recipes.</p>
