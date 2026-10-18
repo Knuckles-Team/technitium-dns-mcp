@@ -2,12 +2,12 @@
 name: technitium-dns-mcp-operations
 skill_type: skill
 description: >-
-  Operate technitium-dns-mcp through its governed MCP and GraphOS capabilities, including dns migration utility, dns record manager. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
+  Operate technitium-dns-mcp through its governed MCP and Arbora capabilities, including dns migration utility, dns record manager. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
 ---
 
 # Technitium Dns Mcp Operations
 
-Use the provider's governed MCP tools through GraphOS delegation.
+Use the provider's governed MCP tools through Arbora delegation.
 
 ## Workflow
 

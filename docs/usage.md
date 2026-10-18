@@ -73,11 +73,5 @@ technitium-dns-mcp
 TRANSPORT=streamable-http HOST=0.0.0.0 PORT=8000 technitium-dns-mcp
 ```
 
-Run the **Pydantic AI agent** against a running MCP server:
-
-```bash
-technitium-dns-agent --mcp-url http://localhost:8000
-```
-
 See [Deployment](deployment.md) for transports, environment configuration, and the
 container recipes.

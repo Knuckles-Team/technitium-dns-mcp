@@ -9,7 +9,6 @@ __all__: list[str] = []
 
 CORE_MODULES = ["technitium_dns_mcp.api_client"]
 OPTIONAL_MODULES = {
-    "technitium_dns_mcp.agent_server": "agent",
     "technitium_dns_mcp.mcp_server": "mcp",
 }
 

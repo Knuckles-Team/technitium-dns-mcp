@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 
 import pytest
 import requests
-from agent_utilities.mcp.verbose_tools import register_tool_surface
+from agent_connector_sdk.mcp.tool_surface import register_tool_surface
 from fastmcp import Client, FastMCP
 from test_user_response_security import ACTIONS, client
 
@@ -57,13 +57,13 @@ def test_safe_exception_has_no_original_chain(
     assert failing_client.token == "mock-configured-token"
 
 
-@pytest.fixture(params=["condensed", "verbose"])
-def served_tool(failing_client, monkeypatch, request):
+@pytest.fixture
+def served_tool(failing_client, monkeypatch):
     monkeypatch.setattr(
         "technitium_dns_mcp.mcp.mcp_user.get_client", lambda: failing_client
     )
     monkeypatch.setattr(
-        "agent_utilities.core.config.setting", lambda key, default=None: default
+        "agent_connector_sdk.config.setting", lambda key, default=None: default
     )
     server = FastMCP("transport-security", mask_error_details=False)
     register_tool_surface(
@@ -72,9 +72,8 @@ def served_tool(failing_client, monkeypatch, request):
         get_client=lambda: failing_client,
         service="technitium-dns-mcp",
         registrars=[register_user_tools],
-        mode_override=request.param,
     )
-    return server, request.param
+    return server
 
 
 @pytest.mark.asyncio
@@ -82,11 +81,9 @@ def served_tool(failing_client, monkeypatch, request):
 async def test_call_tool_never_exposes_transport_secrets(
     served_tool, caplog, capsys, *, action, params
 ):
-    server, mode = served_tool
-    name = "technitium_dns_user" if mode == "condensed" else f"technitium_dns_{action}"
-    arguments = {"params_json": json.dumps(params)}
-    if mode == "condensed":
-        arguments["action"] = action
+    server = served_tool
+    name = "technitium_dns_user"
+    arguments = {"params_json": json.dumps(params), "action": action}
     async with Client(server) as mcp_client:
         result = await mcp_client.call_tool(name, arguments, raise_on_error=False)
     assert result.is_error

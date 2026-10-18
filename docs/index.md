@@ -1,6 +1,6 @@
 # technitium-dns-mcp
 
-Technitium DNS Server **API + MCP Server and Agent** for the agent-utilities
+Technitium DNS Server **API + MCP Server and Agent** for the agent-connector-sdk
 ecosystem — authoritative-zone, record, analytics, and account management exposed as
 typed, deterministic tools an agent can call.
 
@@ -16,13 +16,11 @@ typed, deterministic tools an agent can call.
 ## Overview
 
 `technitium-dns-mcp` wraps the [Technitium DNS Server](https://technitium.com/dns/)
-HTTP API with typed, deterministic MCP tools and a Pydantic AI agent. It provides:
 
 - **`Api`** — a granular `requests`-based REST facade covering the User/SSO,
   Dashboard analytics, and authoritative-zone surfaces of the Technitium API.
 - **A FastMCP tool surface** grouped under the `user`, `dashboard`, and `zones` tags,
   registering account, metrics, zone, DNSSEC, and record operations.
-- **A Pydantic AI agent** (`technitium-dns-agent`) that drives the MCP tools for
   autonomous DNS administration.
 
 The server remains inactive when credentials are absent and connects to any
@@ -33,7 +31,6 @@ Technitium instance over its web service port.
 <div class="grid cards" markdown>
 
 - :material-rocket-start: **[Installation](installation.md)** — pip, source, extras, and the prebuilt Docker image.
-- :material-server-network: **[Deployment](deployment.md)** — run the MCP and agent servers, Docker Compose, Caddy + Technitium.
 - :material-console: **[Usage](usage.md)** — the MCP tools, the `Api` client, and the CLI.
 - :material-database-cog: **[Backing Platform](platform.md)** — deploy Technitium DNS Server with Docker.
 - :material-sitemap: **[Architecture](overview.md)** — the layered API / MCP / agent design.
