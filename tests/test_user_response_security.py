@@ -7,10 +7,9 @@ from unittest.mock import MagicMock
 import pytest
 from agent_connector_sdk.tls.resolve import resolve_tls_profile
 from agent_connector_sdk.mcp.tool_surface import register_tool_surface
-from fastmcp import FastMCP
+from fastmcp import Client, FastMCP
 
 from technitium_dns_mcp.api_client import Api
-from technitium_dns_mcp.mcp.mcp_user import register_user_tools
 
 ACTIONS = [
     ("login", {"user": "example", "password": "fake-password", "totp": "123456"}),
@@ -154,7 +153,6 @@ async def test_registered_surfaces_sanitize(
         client_cls=Api,
         get_client=lambda: client,
         service="technitium-dns-mcp",
-        registrars=[register_user_tools],
     )
     tools = {tool.name: tool for tool in await server.list_tools()}
     payload, expected = sensitive_response()
@@ -168,15 +166,13 @@ async def test_registered_surfaces_sanitize(
         response.text = "fake-secret-raw-body"
         response.json.side_effect = ValueError("fake-secret-parser")
         expected = {"status": "ok"}
-    names = []
-    if user_enabled:
-        names.append("technitium_dns_user")
-    else:
-        assert "technitium_dns_user" not in tools
-    for name in names:
-        kwargs = {"params_json": json.dumps(params), "client": client, "ctx": None}
-        if name == "technitium_dns_user":
-            kwargs["action"] = action
-        result = await tools[name].fn(**kwargs)
-        assert result == expected
-        assert "fake-secret" not in json.dumps(result)
+    assert "technitium_dns_user" not in tools
+    async with Client(server) as mcp_client:
+        result = await mcp_client.call_tool(
+            f"technitium_dns_{action}", params, raise_on_error=False
+        )
+    served = result.structured_content
+    if served is not None and set(served) == {"result"}:
+        served = served["result"]
+    assert served == expected
+    assert "fake-secret" not in json.dumps(served)
