@@ -4,8 +4,6 @@
   "schema_version": "1.0",
   "prompt_version": "0.1.0",
   "source": "technitium-dns-mcp",
-  "extends": "agent-connector-sdk:base",
-  "compose": "append",
   "description": "Technitium DNS specialist: authoritative zone administration, record CRUD, DNSSEC signing, and knowledge-graph mapping over the technitium-dns-mcp server.",
   "metadata": {
     "topic": "Technitium DNS administration",
