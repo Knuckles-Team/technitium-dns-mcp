@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "technitium-dns-mcp"
-version = "2.3.3"
+version = "2.3.4"
 description = "Technitium DNS Server MCP Server and Agent for Agentic AI!"
 readme = "README.md"
 classifiers = [
@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 requires-python = ">=3.12, <3.15"
-dependencies = [ "agent-connector-sdk[mcp]>=0.3.18,<1.0.0", "requests>=2.34.2",]
+dependencies = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0", "requests>=2.34.2",]
 [[project.authors]]
 name = "Project Maintainers"
 email = "maintainers@users.noreply.github.com"
@@ -24,8 +24,8 @@ email = "maintainers@users.noreply.github.com"
 text = "MIT"
 
 [project.optional-dependencies]
-mcp = [ "agent-connector-sdk[mcp]>=0.3.18,<1.0.0",]
-all = [ "agent-connector-sdk[mcp]>=0.3.18,<1.0.0",]
+mcp = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
+all = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
 test = [ "pytest-xdist>=3.8.0", "pytest>=9.1.1", "pytest-asyncio>=1.4.0", "pytest-cov>=7.1.0", ]
 
 [project.scripts]
@@ -66,7 +66,7 @@ check_untyped_defs = true
 dev = [ "pytest-timeout>=2.4.0", ]
 
 [tool.setuptools.package-data]
-technitium_dns_mcp = [ "mcp_config.json", "connector_manifest.yml", "prompts/**", "skills/**", "ontology/**", "connectors/**",]
+technitium_dns_mcp = [ "mcp_config.json", "prompts/**", "skills/**", "ontology/**", "connectors/**",]
 
 [tool.ruff.lint]
 select = [ "E", "F", "I", "UP", "B", ]

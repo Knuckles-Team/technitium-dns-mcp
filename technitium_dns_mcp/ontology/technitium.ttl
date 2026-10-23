@@ -119,5 +119,8 @@
     rdfs:label "Technitium DNS Ontology" ;
     rdfs:comment """Technitium DNS domain extensions federated into the agent-connector-sdk
     knowledge-graph hub: authoritative zones, records, DNSSEC keys, and the server node
-    that hosts them.""" ;
-    owl:imports <http://knuckles.team/kg> .
+    that hosts them.""" .
+
+# ontology-codemod R3
+<http://knuckles.team/kg#DnsRecord> rdfs:subClassOf <http://knuckles.team/kg/infrastructure#DnsRecord> .
+<http://knuckles.team/kg#DnsZone> rdfs:subClassOf <http://knuckles.team/kg/infrastructure#DnsZone> .
