@@ -7,9 +7,6 @@ Served live as ``connector://resources``. Regenerate by editing the declarations
 from __future__ import annotations
 
 from agent_connector_sdk.ingest.live_declaration import source_meta
-from agent_connector_sdk.ingest.sources import IngestSourceDeclaration, IngestSourceSpec
-
-CONNECTOR = "technitium-dns-mcp"
 
 SOURCES = (
     source_meta(
@@ -30,65 +27,38 @@ SOURCES = (
     ),
 )
 
+SCHEMA_VERSION = 2
+
+FIELD_SETS = {
+    "fields_1": {
+        "algorithm": "xsd:string",
+        "disabled": "xsd:boolean",
+        "dnssecStatus": "xsd:string",
+        "keyState": "xsd:string",
+        "keyType": "xsd:string",
+        "recordData": "xsd:string",
+        "recordType": "xsd:string",
+        "technitiumId": "xsd:string",
+        "ttl": "xsd:integer",
+        "zoneType": "xsd:string",
+    },
+}
+
 SCHEMA_MAPPINGS = {
     "DnsRecord": {
-        "fields": {
-            "algorithm": "xsd:string",
-            "disabled": "xsd:boolean",
-            "dnssecStatus": "xsd:string",
-            "keyState": "xsd:string",
-            "keyType": "xsd:string",
-            "recordData": "xsd:string",
-            "recordType": "xsd:string",
-            "technitiumId": "xsd:string",
-            "ttl": "xsd:integer",
-            "zoneType": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "DnsServerNode": {
-        "fields": {
-            "algorithm": "xsd:string",
-            "disabled": "xsd:boolean",
-            "dnssecStatus": "xsd:string",
-            "keyState": "xsd:string",
-            "keyType": "xsd:string",
-            "recordData": "xsd:string",
-            "recordType": "xsd:string",
-            "technitiumId": "xsd:string",
-            "ttl": "xsd:integer",
-            "zoneType": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Server",
     },
     "DnsZone": {
-        "fields": {
-            "algorithm": "xsd:string",
-            "disabled": "xsd:boolean",
-            "dnssecStatus": "xsd:string",
-            "keyState": "xsd:string",
-            "keyType": "xsd:string",
-            "recordData": "xsd:string",
-            "recordType": "xsd:string",
-            "technitiumId": "xsd:string",
-            "ttl": "xsd:integer",
-            "zoneType": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "DnssecKey": {
-        "fields": {
-            "algorithm": "xsd:string",
-            "disabled": "xsd:boolean",
-            "dnssecStatus": "xsd:string",
-            "keyState": "xsd:string",
-            "keyType": "xsd:string",
-            "recordData": "xsd:string",
-            "recordType": "xsd:string",
-            "technitiumId": "xsd:string",
-            "ttl": "xsd:integer",
-            "zoneType": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
 }
@@ -115,22 +85,3 @@ RESOURCES = (
         "name": "DnssecKey",
     },
 )
-
-
-def declaration() -> IngestSourceDeclaration:
-    """The declaration the server assembles from this module."""
-    specs = []
-    for item in SOURCES:
-        for entry in item["connector_sources"]:
-            body = {k: v for k, v in entry.items() if k not in ("tool", "mapping")}
-            specs.append(
-                IngestSourceSpec.model_validate({**body, "tools": (entry["tool"],)})
-            )
-    return IngestSourceDeclaration.model_validate(
-        {
-            "connector": CONNECTOR,
-            "sources": specs,
-            "schema_mappings": SCHEMA_MAPPINGS,
-            "resources": RESOURCES,
-        }
-    )

@@ -11,60 +11,11 @@ from __future__ import annotations
 from typing import Any
 
 from agent_connector_sdk.ingest import (
-    ChangeSet,
-    Entity,
-    IngestBinding,
-    IngestError,
     KnowledgeIngest,
-    Relationship,
-    current_ingest,
+    SourceStream,
 )
 
-_SOURCE = "technitium-dns-mcp"
-_DOMAIN = "technitium"
-_BINDING = IngestBinding(connector=_SOURCE, stream=_DOMAIN)
-
-
-def _to_entity(record: dict[str, Any]) -> Entity:
-    return Entity(
-        id=record.get("id"),
-        node_type=record.get("node_type"),
-        properties={
-            k: v for k, v in record.items() if k not in ("id", "node_type")
-        },
-    )
-
-
-def _to_relationship(record: dict[str, Any]) -> Relationship:
-    properties = {
-        k: v
-        for k, v in record.items()
-        if k not in ("source", "target", "relationship")
-    }
-    return Relationship(
-        source=record["source"],
-        target=record["target"],
-        relationship=record["relationship"],
-        properties=properties or None,
-    )
-
-
-async def ingest_entities(
-    entities: list[dict[str, Any]],
-    relationships: list[dict[str, Any]] | None = None,
-    *,
-    ingest: KnowledgeIngest | None = None,
-) -> dict[str, int]:
-    """Write canonical typed nodes and relationships in one change set."""
-    if not entities:
-        raise IngestError("ingest_entities needs at least one entity")
-    change_set = ChangeSet(
-        entities=tuple(_to_entity(e) for e in entities),
-        relationships=tuple(_to_relationship(r) for r in relationships or ()),
-    )
-    service = ingest or current_ingest()
-    receipt = await service.submit(_BINDING, change_set)
-    return {"nodes": receipt.affected_count, "edges": receipt.relationship_count}
+STREAM = SourceStream.for_package(__package__.split(".")[0], "technitium")
 
 
 def _unwrap(resp: Any, key: str) -> list[dict[str, Any]]:
@@ -131,7 +82,7 @@ async def ingest_zones(
             relationships.append(
                 {"source": ent["id"], "target": node_id, "relationship": "hostedOnNode"}
             )
-    return await ingest_entities(entities, relationships, ingest=ingest)
+    return await STREAM.entities(entities, relationships, ingest=ingest)
 
 
 def _render_rdata(rec: dict[str, Any]) -> str | None:
@@ -193,4 +144,4 @@ async def ingest_records(
         relationships.append(
             {"source": rid, "target": zone_id, "relationship": "recordInZone"}
         )
-    return await ingest_entities(entities, relationships, ingest=ingest)
+    return await STREAM.entities(entities, relationships, ingest=ingest)

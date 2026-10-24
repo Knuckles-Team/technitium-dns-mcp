@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.5] - 2026-10-24
+
+### Changed
+- Central connector migration: requires `agent-connector-sdk>=0.5.4`; server bootstrap, version, containers, ontology artifacts, security scaffold and pre-commit config are provided centrally.
+
 ## [0.15.0] - 2026-05-25
 
 ### Added

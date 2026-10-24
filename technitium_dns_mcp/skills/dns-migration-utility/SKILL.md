@@ -37,7 +37,7 @@ Parse host names, domains, record types (A, AAAA, CNAME, TXT), and target IP add
 
 ### Step 3: Format Normalized Export Payload
 Convert the parsed DNS records into a unified, brand-agnostic format for authoritative Technitium zone import:
-- Output lists of type: `{"domain": "service.arpa", "type": "A", "value": "10.0.0.10", "ttl": 3600}`
+- Output lists of type: `{"domain": "service.example", "type": "A", "value": "10.0.0.10", "ttl": 3600}`
 
 ## Resources
 
