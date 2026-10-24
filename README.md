@@ -209,8 +209,6 @@ is the recommended reference for installation, deployment, and day-to-day operat
 
 ---
 
-Version: 2.3.4
-
 <!-- BEGIN GENERATED: additional-deployment-options -->
 ### Additional Deployment Options
 

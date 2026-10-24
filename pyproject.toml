@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "technitium-dns-mcp"
-version = "2.3.4"
+version = "2.3.5"
 description = "Technitium DNS Server MCP Server and Agent for Agentic AI!"
 readme = "README.md"
 classifiers = [
@@ -15,37 +15,26 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 requires-python = ">=3.12, <3.15"
-dependencies = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0", "requests>=2.34.2",]
+dependencies = [ "agent-connector-sdk[mcp]>=0.5.4,<0.6.0", "requests>=2.34.2",]
 [[project.authors]]
-name = "Project Maintainers"
-email = "maintainers@users.noreply.github.com"
+name = "Repository Maintainers"
+email = "maintainers@knuckles.team"
 
 [project.license]
 text = "MIT"
 
 [project.optional-dependencies]
-mcp = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
-all = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
 test = [ "pytest-xdist>=3.8.0", "pytest>=9.1.1", "pytest-asyncio>=1.4.0", "pytest-cov>=7.1.0", ]
 
 [project.scripts]
-technitium-dns-mcp = "technitium_dns_mcp.mcp_server:mcp_server"
-
-[project.entry-points."agent_connector_sdk.skill_providers"]
-technitium-dns-mcp = "technitium_dns_mcp.skills"
-
-[project.entry-points."agent_connector_sdk.ontology_providers"]
-technitium-dns-mcp = "technitium_dns_mcp.ontology"
-
-[project.entry-points."agent_connector_sdk.source_connector_providers"]
-technitium-dns-mcp = "technitium_dns_mcp.connectors"
+technitium-dns-mcp = "agent_connector_sdk.cli:serve"
 
 [project.entry-points."agent_connector_sdk.prompt_providers"]
 technitium-dns-mcp = "technitium_dns_mcp.prompts"
 
 # The one declared connector identity: the fleet name (SDK-CONNECTOR-CONTROL-R071).
 [project.entry-points."agent_connector_sdk.connector"]
-technitium-dns-mcp = "technitium_dns_mcp"
+technitium-dns-mcp = "technitium_dns_mcp:connector"
 
 [tool.uv.workspace]
 members = ["."]
@@ -54,6 +43,7 @@ members = ["."]
 include-package-data = true
 
 [tool.ruff]
+extend-exclude = ["tests"]
 line-length = 88
 target-version = "py312"
 
@@ -88,3 +78,9 @@ markers = [
 
 [tool.pipelines_hooks.ste]
 exempt = ["specs/*", "specs/**/*"]
+
+[tool.pipelines.container]
+compose_env = ["TECHNITIUM_DNS_URL", "TECHNITIUM_DNS_TOKEN", "TLS_PROFILE", "TLS_PROFILES_REF"]
+
+[tool.pipelines.codespell]
+ignore_words = ["requestors"]

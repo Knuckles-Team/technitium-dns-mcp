@@ -16,7 +16,7 @@ import pytest
 from agent_connector_sdk.ingest import IngestError, KnowledgeIngest
 
 from technitium_dns_mcp.kg_ingest import (
-    ingest_entities,
+    STREAM,
     ingest_records,
     ingest_zones,
 )
@@ -63,7 +63,7 @@ def _relationship_name_of(rel: Any) -> str:
 @pytest.mark.asyncio
 async def test_ingest_entities_writes_nodes_and_edges(ingest):
     service, transport = ingest
-    res = await ingest_entities(
+    res = await STREAM.entities(
         [
             {"id": "a", "node_type": "DnsZone", "name": "home.example"},
             {"id": "b", "node_type": "DnsServerNode", "name": "n1"},
@@ -84,7 +84,7 @@ async def test_ingest_entities_writes_nodes_and_edges(ingest):
 async def test_ingest_entities_rejects_empty_input(ingest):
     service, transport = ingest
     with pytest.raises(IngestError, match="at least one entity"):
-        await ingest_entities([], ingest=service)
+        await STREAM.entities([], ingest=service)
     assert transport.requests == []
 
 
@@ -102,7 +102,7 @@ async def test_ingest_zones_maps_zone_and_node(ingest):
                     "disabled": False,
                     "internal": False,
                 },
-                {"name": "10.in-addr.arpa", "type": "Primary", "disabled": False},
+                {"name": "10.in-addr.example", "type": "Primary", "disabled": False},
             ]
         },
     }
