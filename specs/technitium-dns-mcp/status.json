@@ -15,7 +15,7 @@
         "425958bd488a"
       ],
       "verified_by": [
-        "tests/test_ingest_sources.py:17"
+        "tests/test_ingest_sources.py:14"
       ]
     }
   ]
