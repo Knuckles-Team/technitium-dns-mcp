@@ -35,6 +35,7 @@ Technitium instance over its web service port.
 - :material-database-cog: **[Backing Platform](platform.md)** — deploy Technitium DNS Server with Docker.
 - :material-sitemap: **[Architecture](overview.md)** — the layered API / MCP / agent design.
 - :material-tag-multiple: **[Concepts](concepts.md)** — the `CONCEPT:TDNS-*` registry.
+- :material-chart-timeline-variant: **[Spec delivery](spec-delivery/)** — generated requirements, status, and evidence from the canonical Pages dashboard.
 
 </div>
 
