@@ -1,6 +1,6 @@
 # CONN-TECHNITIUM-DNS-MCP — Technitium DNS ingestible sources
 
-Owner: technitium-dns-mcp. Cross-repo IDs: SDK-SOURCE-INGEST-R004.19, SDK-SOURCE-INGEST-R004.21, ARBORA-OPS-R020.6.
+Owner: technitium-dns-mcp. Cross-repo IDs: SCION-SOURCE-INGEST-R004.19, SCION-SOURCE-INGEST-R004.21, ARBORA-OPS-R020.6.
 
 ## Purpose and user stories
 
