@@ -5,8 +5,8 @@ import json
 from unittest.mock import MagicMock
 
 import pytest
-from agent_connector_sdk.tls.resolve import resolve_tls_profile
-from agent_connector_sdk.mcp.tool_surface import register_tool_surface
+from scion_sdk.tls.resolve import resolve_tls_profile
+from scion_sdk.mcp.tool_surface import register_tool_surface
 from fastmcp import Client, FastMCP
 
 from technitium_dns_mcp.api_client import Api
@@ -144,7 +144,7 @@ async def test_registered_surfaces_sanitize(
     client, monkeypatch, *, action, params, user_enabled, response_kind
 ):
     monkeypatch.setattr(
-        "agent_connector_sdk.config.setting",
+        "scion_sdk.config.setting",
         lambda key, default=None: user_enabled if key == "USERTOOL" else default,
     )
     server = FastMCP("security-test")

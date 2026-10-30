@@ -1,5 +1,5 @@
 site_name: "technitium-dns-mcp"
-site_description: "Technitium DNS Server API + MCP Server and Agent — authoritative-zone, record, analytics, and account management for the agent-connector-sdk ecosystem."
+site_description: "Technitium DNS Server API + MCP Server and Agent — authoritative-zone, record, analytics, and account management for the scion-sdk ecosystem."
 site_url: "https://knuckles-team.github.io/technitium-dns-mcp/"
 repo_name: "Knuckles-Team/technitium-dns-mcp"
 repo_url: "https://github.com/Knuckles-Team/technitium-dns-mcp"

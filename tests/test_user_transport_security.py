@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 
 import pytest
 import requests
-from agent_connector_sdk.mcp.tool_surface import register_tool_surface
+from scion_sdk.mcp.tool_surface import register_tool_surface
 from fastmcp import Client, FastMCP
 from test_user_response_security import ACTIONS, client
 
@@ -61,7 +61,7 @@ def served_tool(failing_client, monkeypatch):
         "technitium_dns_mcp.mcp.mcp_user.get_client", lambda: failing_client
     )
     monkeypatch.setattr(
-        "agent_connector_sdk.config.setting", lambda key, default=None: default
+        "scion_sdk.config.setting", lambda key, default=None: default
     )
     server = FastMCP("transport-security", mask_error_details=False)
     register_tool_surface(
