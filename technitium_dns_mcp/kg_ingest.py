@@ -2,7 +2,7 @@
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. Connector-specific mappers emit
 canonical node_type nodes and relationship edges through the
-``agent_connector_sdk.ingest`` knowledge-ingest facade, which owns the transaction
+``scion_sdk.ingest`` knowledge-ingest facade, which owns the transaction
 and raises ``IngestError`` when the authoritative engine cannot commit.
 """
 
@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from agent_connector_sdk.ingest import (
+from scion_sdk.ingest import (
     KnowledgeIngest,
     SourceStream,
 )

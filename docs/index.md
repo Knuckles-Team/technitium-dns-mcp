@@ -1,6 +1,6 @@
 # technitium-dns-mcp
 
-Technitium DNS Server **API + MCP Server and Agent** for the agent-connector-sdk
+Technitium DNS Server **API + MCP Server and Agent** for the scion-sdk
 ecosystem — authoritative-zone, record, analytics, and account management exposed as
 typed, deterministic tools an agent can call.
 

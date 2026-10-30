@@ -40,7 +40,7 @@ def register_ingest_tools(mcp: FastMCP):
         """
         import json
 
-        from agent_connector_sdk.ingest import IngestError
+        from scion_sdk.ingest import IngestError
 
         from technitium_dns_mcp.kg_ingest import ingest_records, ingest_zones
 

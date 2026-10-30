@@ -10,7 +10,7 @@ license: MIT
 tags: [technitium, dns, mcp, connector, development, testing, pages, specs]
 tier: repository
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 
@@ -19,7 +19,7 @@ metadata:
 Use this skill for changes inside the `technitium-dns-mcp` connector. It owns
 the Technitium DNS API calls, source mappings, MCP registration, packaged
 prompts and skills, and connector-owned documentation. Shared transport and
-connector contracts belong to `agent-connector-sdk`; admission, serving, and
+connector contracts belong to `scion-sdk`; admission, serving, and
 durable graph state belong to their owning repositories.
 
 ## Repository map
