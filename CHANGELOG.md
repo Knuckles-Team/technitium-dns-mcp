@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.8] - 2026-10-30
+
+### Changed
+- Require `scion-sdk>=0.6.4,<0.7.0`; `uv.lock` relocked.
+
 ## [2.3.5] - 2026-10-24
 
 ### Changed
