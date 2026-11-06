@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.9] - 2026-11-06
+
+### Fixed
+- The DNS specialist prompt names the typed `technitium_dns_*` tools instead of the retired `technitium_dns_zones` action tool.
+- Require `scion-sdk>=0.6.5` so destructive tools accept `confirm=true`.
+
 ## [2.3.8] - 2026-10-30
 
 ### Changed
