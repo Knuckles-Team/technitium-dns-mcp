@@ -9,25 +9,52 @@
 # Technitium DNS ontology — authoritative zones, DNS records, DNSSEC signing keys, and
 # the DNS server node that hosts them. All classes/properties live in the shared `:` (kg#)
 # namespace; only the owl:Ontology node gets the per-package IRI. Backs the technitium-dns-mcp
-# tool surface (technitium_dns_zones / technitium_dns_dashboard / technitium_dns_user).
+# tool surface (technitium_dns_list_zones, technitium_dns_get_records, technitium_dns_get_stats, ...).
 
 # --- classes (owl:Class) ---
 
 :DnsZone a owl:Class ;
     rdfs:label "DNS Zone" ;
-    rdfs:comment "An authoritative DNS zone hosted on a Technitium server (Primary, Secondary, Stub, Forwarder, or Catalog), listed by technitium_dns_zones action=list_zones." .
+    rdfs:comment "An authoritative DNS zone hosted on a Technitium server (Primary, Secondary, Stub, Forwarder, or Catalog), listed by technitium_dns_list_zones." .
 
 :DnsRecord a owl:Class ;
     rdfs:label "DNS Record" ;
-    rdfs:comment "A resource record within a zone (A, AAAA, CNAME, TXT, MX, SRV, NS, CAA, PTR, SOA, …) with a name, type, TTL, and record data (technitium_dns_zones action=get_records)." .
+    rdfs:comment "A resource record within a zone (A, AAAA, CNAME, TXT, MX, SRV, NS, CAA, PTR, SOA, …) with a name, type, TTL, and record data (technitium_dns_get_records)." .
 
 :DnssecKey a owl:Class ;
     rdfs:label "DNSSEC Key" ;
-    rdfs:comment "A DNSSEC signing key (KSK or ZSK) attached to a signed zone, with its algorithm and lifecycle state (technitium_dns_zones action=get_dnssec_properties / add_private_key)." .
+    rdfs:comment "A DNSSEC signing key (KSK or ZSK) attached to a signed zone, with its algorithm and lifecycle state (technitium_dns_get_dnssec_properties, technitium_dns_add_private_key)." ;
+    rdfs:subClassOf :Resource .
 
 :DnsServerNode a owl:Class ;
     rdfs:label "DNS Server Node" ;
-    rdfs:comment "A Technitium DNS server node/instance that hosts zones and answers queries (the 'node' targeted by tool actions; stats via technitium_dns_dashboard)." .
+    rdfs:comment "A Technitium DNS server node/instance that hosts zones and answers queries (the 'node' targeted by tools; stats via technitium_dns_get_stats)." ;
+    rdfs:subClassOf :Server .
+
+:DhcpScope a owl:Class ;
+    rdfs:label "DHCP Scope" ;
+    rdfs:comment "An address pool the server hands out leases from, with its options and reservations (technitium_dns_list_dhcp_scopes)." ;
+    rdfs:subClassOf :NetworkSubnet .
+
+:DhcpLease a owl:Class ;
+    rdfs:label "DHCP Lease" ;
+    rdfs:comment "An address held by one client in a scope, dynamic or reserved (technitium_dns_list_dhcp_leases)." ;
+    rdfs:subClassOf :ConfigurationItem .
+
+:DnsApp a owl:Class ;
+    rdfs:label "DNS App" ;
+    rdfs:comment "An app installed on the DNS server, with its configuration (technitium_dns_list_apps)." ;
+    rdfs:subClassOf :SoftwareComponent .
+
+:DnsFilterEntry a owl:Class ;
+    rdfs:label "DNS Filter Entry" ;
+    rdfs:comment "A domain on the blocked or allowed list (technitium_dns_list_blocked, technitium_dns_list_allowed)." ;
+    rdfs:subClassOf :Policy .
+
+:DnsAdminAccount a owl:Class ;
+    rdfs:label "DNS Admin Account" ;
+    rdfs:comment "A user or group that can administer the DNS server (technitium_dns_list_users, technitium_dns_list_groups)." ;
+    rdfs:subClassOf :Account .
 
 # --- links (owl:ObjectProperty) ---
 
@@ -120,7 +147,3 @@
     rdfs:comment """Technitium DNS domain extensions federated into the scion-sdk
     knowledge-graph hub: authoritative zones, records, DNSSEC keys, and the server node
     that hosts them.""" .
-
-# ontology-codemod R3
-<http://knuckles.team/kg#DnsRecord> rdfs:subClassOf <http://knuckles.team/kg/infrastructure#DnsRecord> .
-<http://knuckles.team/kg#DnsZone> rdfs:subClassOf <http://knuckles.team/kg/infrastructure#DnsZone> .

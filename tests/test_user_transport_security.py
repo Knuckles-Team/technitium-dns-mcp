@@ -57,12 +57,7 @@ def test_safe_exception_has_no_original_chain(
 
 @pytest.fixture
 def served_tool(failing_client, monkeypatch):
-    monkeypatch.setattr(
-        "technitium_dns_mcp.mcp.mcp_user.get_client", lambda: failing_client
-    )
-    monkeypatch.setattr(
-        "scion_sdk.config.setting", lambda key, default=None: default
-    )
+    monkeypatch.setattr("scion_sdk.config.setting", lambda key, default=None: default)
     server = FastMCP("transport-security", mask_error_details=False)
     register_tool_surface(
         server,

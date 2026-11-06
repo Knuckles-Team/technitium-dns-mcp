@@ -1,9 +1,17 @@
+import base64
+from collections.abc import Callable
 from typing import Any
 from urllib.parse import urljoin
 
 import requests
 from scion_sdk.tls.profile import ResolvedTLSProfile
 from scion_sdk.tls.resolve import resolve_tls_profile
+
+
+def destructive[F: Callable[..., Any]](method: F) -> F:
+    """Mark an operation destructive: the served tool takes ``confirm`` and asks first."""
+    method.__http_method__ = "DELETE"  # type: ignore[attr-defined]
+    return method
 
 
 class ApiClientBase:
@@ -96,3 +104,52 @@ class ApiClientBase:
             return response.json()
         except Exception:
             return {"status": "ok", "text": response.text}
+
+    @staticmethod
+    def _fields(**values: Any) -> dict[str, str]:
+        """Form fields for an API call: drop ``None``, spell booleans and join lists.
+
+        Keys are the API's own camelCase names.
+        """
+        out: dict[str, str] = {}
+        for key, value in values.items():
+            if value is None:
+                continue
+            if isinstance(value, bool):
+                out[key] = str(value).lower()
+            elif isinstance(value, list | tuple):
+                out[key] = ",".join(str(v) for v in value)
+            else:
+                out[key] = str(value)
+        return out
+
+    def request_binary(
+        self,
+        method: str,
+        endpoint: str,
+        params: dict[str, Any] | None = None,
+        data: Any | None = None,
+    ) -> dict[str, Any]:
+        """Call an endpoint that returns a file; the body comes back base64 encoded."""
+        url = urljoin(self.base_url + "/", endpoint.lstrip("/"))
+        if self.token:
+            if method.upper() == "GET":
+                params = {**(params or {}), "token": self.token}
+            else:
+                data = {**(data or {}), "token": self.token}
+        try:
+            response = self._session.request(
+                method=method, url=url, params=params, data=data
+            )
+        except Exception as error:
+            error_type = type(error)
+        else:
+            if response.status_code >= 400:
+                raise Exception(f"API error: {response.status_code}")
+            return {
+                "status": "ok",
+                "content_type": response.headers.get("Content-Type", ""),
+                "size": len(response.content),
+                "content_base64": base64.b64encode(response.content).decode("ascii"),
+            }
+        raise error_type(f"{error_type.__name__} during {method} {endpoint}")
