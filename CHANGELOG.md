@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.4.0] - 2026-11-06
+
+### Added
+- Typed tools for every remaining Technitium API area: server settings (read, change, TSIG key names, block list refresh, temporary blocking pause, backup, restore), cache, allowed and blocked lists, server logs and query log search, DHCP scopes and leases, DNS apps, and administration (users, groups, permissions, sessions, API tokens). 62 new tools; destructive ones take `confirm`.
+- `technitium_dns_add_record`, `technitium_dns_update_record` and `technitium_dns_delete_record` take typed record fields (`ip_address`, `cname`, `exchange`, `preference`, `text`, `priority`, `weight`, `port`, `target`, `flags`, `tag`, `value` and more) instead of a JSON string.
+- Complete connector surface on `scion-sdk>=0.9.0`: 26 task contracts, data locations, three business roles with an operator prompt and three role prompts, four task skills, and ontology classes that extend the core.
+
+### Removed
+- The retired action-routed tool modules (`mcp_zones`, `mcp_user`, `mcp_dashboard`).
+
 ## [2.3.9] - 2026-11-06
 
 ### Fixed

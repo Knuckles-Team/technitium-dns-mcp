@@ -595,6 +595,27 @@ class ApiClientZones(ApiClientBase):
         ttl: int,
         overwrite: bool | None = None,
         node: str | None = None,
+        comments: str | None = None,
+        expiry_ttl: int | None = None,
+        ip_address: str | None = None,
+        ptr: bool | None = None,
+        create_ptr_zone: bool | None = None,
+        update_svcb_hints: bool | None = None,
+        name_server: str | None = None,
+        glue: str | None = None,
+        cname: str | None = None,
+        ptr_name: str | None = None,
+        exchange: str | None = None,
+        preference: int | None = None,
+        text: str | None = None,
+        split_text: bool | None = None,
+        priority: int | None = None,
+        weight: int | None = None,
+        port: int | None = None,
+        target: str | None = None,
+        flags: int | None = None,
+        tag: str | None = None,
+        value: str | None = None,
         **kwargs: Any,
     ) -> dict[str, Any]:
         """Adds a new DNS record.
@@ -602,23 +623,63 @@ class ApiClientZones(ApiClientBase):
         Args:
             zone: Zone domain name.
             domain: Domain name of the record.
-            type: Record type (A, AAAA, CNAME, TXT, MX, SRV, NS, CAA, PTR, etc.).
+            type: Record type (A, AAAA, CNAME, TXT, MX, SRV, NS, CAA, PTR, ANAME, etc.).
             ttl: Time-To-Live value in seconds.
             overwrite: Set True to overwrite existing records with same domain and type.
             node: Target server node.
-            **kwargs: Extra parameters depending on record type (e.g. ipAddress, nameServer, text, mailExchange, priority).
+            comments: Free text kept with the record.
+            expiry_ttl: Seconds after which the record deletes itself.
+            ip_address: Address for A and AAAA records.
+            ptr: Also add the matching PTR record (A and AAAA).
+            create_ptr_zone: Create the reverse zone when it is missing.
+            update_svcb_hints: Update SVCB and HTTPS hints (A and AAAA).
+            name_server: Name server for NS records.
+            glue: Glue addresses for NS records.
+            cname: Target for CNAME and ANAME records.
+            ptr_name: Target for PTR records.
+            exchange: Mail server for MX records.
+            preference: Preference for MX records.
+            text: Text for TXT records.
+            split_text: Split long TXT text into several strings.
+            priority: Priority for SRV records.
+            weight: Weight for SRV records.
+            port: Port for SRV records.
+            target: Target for SRV records.
+            flags: Flags for CAA records.
+            tag: Tag for CAA records (issue, issuewild or iodef).
+            value: Value for CAA records.
+            **kwargs: Other record fields from the Technitium API in its camelCase spelling.
         """
-        data = {"zone": zone, "domain": domain, "type": type, "ttl": str(ttl)}
-        if overwrite is not None:
-            data["overwrite"] = str(overwrite).lower()
-        if node is not None:
-            data["node"] = node
-
-        # Append dynamic keyword arguments mapping directly to API inputs
-        for k, v in kwargs.items():
-            if v is not None:
-                data[k] = str(v)
-
+        data = self._fields(
+            zone=zone,
+            domain=domain,
+            type=type,
+            ttl=ttl,
+            overwrite=overwrite,
+            node=node,
+            comments=comments,
+            expiryTtl=expiry_ttl,
+            ipAddress=ip_address,
+            ptr=ptr,
+            createPtrZone=create_ptr_zone,
+            updateSvcbHints=update_svcb_hints,
+            nameServer=name_server,
+            glue=glue,
+            cname=cname,
+            ptrName=ptr_name,
+            exchange=exchange,
+            preference=preference,
+            text=text,
+            splitText=split_text,
+            priority=priority,
+            weight=weight,
+            port=port,
+            target=target,
+            flags=flags,
+            tag=tag,
+            value=value,
+        )
+        data.update(self._fields(**kwargs))
         return self.request("POST", "/api/zones/records/add", data=data)
 
     def get_records(
@@ -659,19 +720,125 @@ class ApiClientZones(ApiClientBase):
         type: str,
         ttl: int | None = None,
         node: str | None = None,
+        new_domain: str | None = None,
+        comments: str | None = None,
+        expiry_ttl: int | None = None,
+        ip_address: str | None = None,
+        new_ip_address: str | None = None,
+        ptr: bool | None = None,
+        create_ptr_zone: bool | None = None,
+        name_server: str | None = None,
+        new_name_server: str | None = None,
+        cname: str | None = None,
+        ptr_name: str | None = None,
+        new_ptr_name: str | None = None,
+        exchange: str | None = None,
+        new_exchange: str | None = None,
+        preference: int | None = None,
+        new_preference: int | None = None,
+        text: str | None = None,
+        new_text: str | None = None,
+        split_text: bool | None = None,
+        priority: int | None = None,
+        new_priority: int | None = None,
+        weight: int | None = None,
+        new_weight: int | None = None,
+        port: int | None = None,
+        new_port: int | None = None,
+        target: str | None = None,
+        new_target: str | None = None,
+        flags: int | None = None,
+        new_flags: int | None = None,
+        tag: str | None = None,
+        new_tag: str | None = None,
+        value: str | None = None,
+        new_value: str | None = None,
         **kwargs: Any,
     ) -> dict[str, Any]:
-        """Updates an existing DNS record."""
-        data = {"zone": zone, "domain": domain, "type": type}
-        if ttl is not None:
-            data["ttl"] = str(ttl)
-        if node is not None:
-            data["node"] = node
+        """Updates an existing DNS record. Name the current value, then its new_ value.
 
-        for k, v in kwargs.items():
-            if v is not None:
-                data[k] = str(v)
-
+        Args:
+            zone: Zone domain name.
+            domain: Domain name of the record.
+            type: Record type.
+            ttl: New TTL in seconds.
+            node: Target server node.
+            new_domain: New domain name for the record.
+            comments: Free text kept with the record.
+            expiry_ttl: Seconds after which the record deletes itself.
+            ip_address: Current address (A and AAAA).
+            new_ip_address: New address (A and AAAA).
+            ptr: Also update the matching PTR record.
+            create_ptr_zone: Create the reverse zone when it is missing.
+            name_server: Current name server (NS).
+            new_name_server: New name server (NS).
+            cname: New target (CNAME and ANAME).
+            ptr_name: Current target (PTR).
+            new_ptr_name: New target (PTR).
+            exchange: Current mail server (MX).
+            new_exchange: New mail server (MX).
+            preference: Current preference (MX).
+            new_preference: New preference (MX).
+            text: Current text (TXT).
+            new_text: New text (TXT).
+            split_text: Split long TXT text into several strings.
+            priority: Current priority (SRV).
+            new_priority: New priority (SRV).
+            weight: Current weight (SRV).
+            new_weight: New weight (SRV).
+            port: Current port (SRV).
+            new_port: New port (SRV).
+            target: Current target (SRV).
+            new_target: New target (SRV).
+            flags: Current flags (CAA).
+            new_flags: New flags (CAA).
+            tag: Current tag (CAA).
+            new_tag: New tag (CAA).
+            value: Current value (CAA).
+            new_value: New value (CAA).
+            **kwargs: Other record fields from the Technitium API in its camelCase spelling.
+        """
+        data = self._fields(
+            zone=zone,
+            domain=domain,
+            type=type,
+            ttl=ttl,
+            node=node,
+            newDomain=new_domain,
+            comments=comments,
+            expiryTtl=expiry_ttl,
+            ipAddress=ip_address,
+            newIpAddress=new_ip_address,
+            ptr=ptr,
+            createPtrZone=create_ptr_zone,
+            nameServer=name_server,
+            newNameServer=new_name_server,
+            cname=cname,
+            ptrName=ptr_name,
+            newPtrName=new_ptr_name,
+            exchange=exchange,
+            newExchange=new_exchange,
+            preference=preference,
+            newPreference=new_preference,
+            text=text,
+            newText=new_text,
+            splitText=split_text,
+            priority=priority,
+            newPriority=new_priority,
+            weight=weight,
+            newWeight=new_weight,
+            port=port,
+            newPort=new_port,
+            target=target,
+            newTarget=new_target,
+            flags=flags,
+            newFlags=new_flags,
+            tag=tag,
+            newTag=new_tag,
+            value=value,
+            newValue=new_value,
+        )
+        data.update(self._fields(**kwargs))
         return self.request("POST", "/api/zones/records/update", data=data)
 
     def delete_record(
@@ -680,15 +847,61 @@ class ApiClientZones(ApiClientBase):
         domain: str,
         type: str,
         node: str | None = None,
+        ip_address: str | None = None,
+        name_server: str | None = None,
+        ptr_name: str | None = None,
+        exchange: str | None = None,
+        preference: int | None = None,
+        text: str | None = None,
+        priority: int | None = None,
+        weight: int | None = None,
+        port: int | None = None,
+        target: str | None = None,
+        flags: int | None = None,
+        tag: str | None = None,
+        value: str | None = None,
         **kwargs: Any,
     ) -> dict[str, Any]:
-        """Deletes matching DNS record(s)."""
-        data = {"zone": zone, "domain": domain, "type": type}
-        if node is not None:
-            data["node"] = node
+        """Deletes the matching DNS record. Name the record's data to pick one among several.
 
-        for k, v in kwargs.items():
-            if v is not None:
-                data[k] = str(v)
-
+        Args:
+            zone: Zone domain name.
+            domain: Domain name of the record.
+            type: Record type.
+            node: Target server node.
+            ip_address: Address (A and AAAA).
+            name_server: Name server (NS).
+            ptr_name: Target (PTR).
+            exchange: Mail server (MX).
+            preference: Preference (MX).
+            text: Text (TXT).
+            priority: Priority (SRV).
+            weight: Weight (SRV).
+            port: Port (SRV).
+            target: Target (SRV).
+            flags: Flags (CAA).
+            tag: Tag (CAA).
+            value: Value (CAA).
+            **kwargs: Other record fields from the Technitium API in its camelCase spelling.
+        """
+        data = self._fields(
+            zone=zone,
+            domain=domain,
+            type=type,
+            node=node,
+            ipAddress=ip_address,
+            nameServer=name_server,
+            ptrName=ptr_name,
+            exchange=exchange,
+            preference=preference,
+            text=text,
+            priority=priority,
+            weight=weight,
+            port=port,
+            target=target,
+            flags=flags,
+            tag=tag,
+            value=value,
+        )
+        data.update(self._fields(**kwargs))
         return self.request("POST", "/api/zones/records/delete", data=data)

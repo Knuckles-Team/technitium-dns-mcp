@@ -4,8 +4,7 @@ ontology_source: technitium
 sync:
 - preset: technitium-zones
   server: technitium-dns-mcp
-  tool: technitium_dns_zones
-  action: list_zones
+  tool: technitium_dns_list_zones
   records_path: response.zones
   id_field: name
   title_field: name
