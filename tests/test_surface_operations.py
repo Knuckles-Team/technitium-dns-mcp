@@ -155,7 +155,7 @@ def test_user_creation_sends_the_password_field(client):
 
 
 def _served():
-    from scion_sdk._connector_serve import build_server
+    from scion_sdk.connector import build_server
 
     mcp = build_server("technitium_dns_mcp", command_args=[])[1]
     return {t.name: t for t in asyncio.run(mcp.list_tools())}

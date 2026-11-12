@@ -27,7 +27,7 @@ Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `technitium-dns-mcp[mcp]` | Connector-focused MCP server (`scion-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
+| `technitium-dns-mcp[mcp]` | Connector-focused MCP server (`scion-sdk` — FastMCP/FastAPI + `medulla[full]`) | The operator only run the **MCP server** (smallest install / image) |
 | `technitium-dns-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
@@ -46,20 +46,20 @@ One multi-stage `docker/Dockerfile` builds the MCP-only image (`--target mcp`):
 
 | Image tag | Build target | Contents | Entrypoint |
 |-----------|--------------|----------|------------|
-| `example/technitium-dns-mcp:mcp` | `--target mcp` | `technitium-dns-mcp[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `technitium-dns-mcp` |
+| `example/technitium-dns-mcp:mcp` | `--target mcp` | `technitium-dns-mcp[mcp]` — **connector-focused**, includes `medulla[full]`; no model-orchestration stack | `technitium-dns-mcp` |
 
 ```bash
 docker build --target mcp   -t example/technitium-dns-mcp:mcp    docker/   # connector-focused MCP server
 ```
 
-### Knowledge-graph database (`epistemic-graph`)
+### Knowledge-graph database (`medulla`)
 
-Scion SDK core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
+Scion SDK core dependency (`medulla[full]`). The `[mcp]` extra keeps
 deployments can use the bundled engine. For production or shared state, run
-**epistemic-graph as a dedicated database service** and configure the runtime to use it.
+**medulla as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
 diagrams are documented in the
-[epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
+[medulla deployment guide](https://knuckles-team.github.io/medulla/deployment/).
 
 ### Credential-bearing user operations
 
@@ -256,7 +256,7 @@ configured secret provider.
 | `technitium_dns_dashboard` | `DASHBOARDTOOL` | Query Technitium DNS metrics, prometheus stats, category details, or delete statistics. |
 | `technitium_dns_user` | `USERTOOL` | Manage Technitium DNS user sessions, authentication, credentials, and profile settings. |
 | `technitium_dns_zones` | `ZONESTOOL` | Manage Technitium DNS authoritative zones, DNSSEC properties/keys, and perform DNS record CRUD. |
-| `technitium_ingest_zones` | `INGESTTOOL` | Natively ingest Technitium DNS zones (+ their records) into epistemic-graph. |
+| `technitium_ingest_zones` | `INGESTTOOL` | Natively ingest Technitium DNS zones (+ their records) into medulla. |
 
 #### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
 
