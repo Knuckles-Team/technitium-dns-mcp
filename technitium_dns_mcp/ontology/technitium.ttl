@@ -109,6 +109,18 @@
     rdfs:comment "Whether the zone or record is currently disabled." ;
     rdfs:range xsd:boolean .
 
+:name a owl:DatatypeProperty ;
+    rdfs:label "name" ;
+    rdfs:comment "The owner name of a DNS record." ;
+    rdfs:domain :DnsRecord ;
+    rdfs:range xsd:string .
+
+:address a owl:DatatypeProperty ;
+    rdfs:label "address" ;
+    rdfs:comment "The IP address held by an address (A or AAAA) record." ;
+    rdfs:domain :DnsRecord ;
+    rdfs:range xsd:string .
+
 :recordType a owl:DatatypeProperty ;
     rdfs:label "record type" ;
     rdfs:comment "DNS record type (A, AAAA, CNAME, TXT, MX, SRV, NS, CAA, PTR, SOA, …)." ;

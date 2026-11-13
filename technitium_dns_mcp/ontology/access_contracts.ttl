@@ -1,0 +1,18 @@
+@prefix ac: <https://knuckles-team.github.io/ontology/access#> .
+@prefix : <https://knuckles-team.github.io/ontology/connector/technitium-dns#> .
+@prefix td: <https://knuckles-team.github.io/ontology/connector/technitium-dns-access#> .
+
+td:recordAccess a ac:AccessContract ;
+    ac:classIri :DnsRecord ;
+    ac:sourceId "technitium-dns-mcp" ;
+    ac:entity "record" ;
+    ac:keyField "name" ;
+    ac:accessKind "mcp_tool" ;
+    ac:operation "technitium_dns_get_records" ;
+    ac:parameter "domain", "zone", "list_zone" ;
+    ac:recordsPath "response.records" ;
+    ac:pagination "none" .
+
+td:name a ac:PropertyBinding ; ac:contract td:recordAccess ; ac:property :name ; ac:field "name" .
+td:recordType a ac:PropertyBinding ; ac:contract td:recordAccess ; ac:property :recordType ; ac:field "type" .
+td:address a ac:PropertyBinding ; ac:contract td:recordAccess ; ac:property :address ; ac:field "rData.ipAddress" .
