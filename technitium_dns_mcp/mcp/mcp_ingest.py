@@ -1,4 +1,4 @@
-"""Wire-First MCP tool: natively ingest Technitium DNS state into the epistemic-graph.
+"""Wire-First MCP tool: natively ingest Technitium DNS state into the medulla.
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. Lists zones (and, per zone, their
 records) via the real client and pushes them into the knowledge graph as typed
@@ -30,7 +30,7 @@ def register_ingest_tools(mcp: FastMCP):
         client=Depends(get_client),
         ctx: Context | None = Field(default=None, description="MCP context"),
     ) -> Any:
-        """Natively ingest Technitium DNS zones (+ their records) into epistemic-graph.
+        """Natively ingest Technitium DNS zones (+ their records) into medulla.
 
         Lists authoritative zones via ``list_zones`` and pushes them as typed
         ``:DnsZone`` nodes (linked to the ``:DnsServerNode``); for each zone it also
