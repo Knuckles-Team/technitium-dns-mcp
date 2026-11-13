@@ -1,0 +1,1 @@
+{"status": "ok", "response": {"zone": {"name": "example.invalid", "type": "Primary", "disabled": false}, "records": [{"name": "www.example.invalid", "type": "A", "ttl": 3600, "disabled": false, "rData": {"ipAddress": "192.0.2.10"}}]}}
