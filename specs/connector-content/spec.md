@@ -43,6 +43,7 @@ The fleet operator and the engine rely on this behaviour of `technitium-dns-mcp`
 
 - **FR-001**: Default content. Rows: `CONN-TECHNITIUM-DNS-MCP-CONNECTOR-CONTENT-R001`.
 - **FR-002**: Declare access contracts for the competency reads of technitium-dns-mcp. Rows: `CONN-TECHNITIUM-DNS-MCP-CONNECTOR-CONTENT-R002`.
+- **FR-003**: The packaged ontology extends only the core ontology and redeclares no core term (`CONN-TECHNITIUM-DNS-MCP-CONNECTOR-CONTENT-R004`).
 
 ## Success Criteria
 
@@ -60,3 +61,4 @@ The fleet operator and the engine rely on this behaviour of `technitium-dns-mcp`
 |---|---|---|---|---|
 | FR-001 | `CONN-TECHNITIUM-DNS-MCP-CONNECTOR-CONTENT-R001` | plan.md Production caller chain | T-001 | tests/test_default_content_surfaces.py::test_default_content_surfaces |
 | FR-002 | `CONN-TECHNITIUM-DNS-MCP-CONNECTOR-CONTENT-R002` | plan.md Production caller chain | T-002 | tests/test_access_contracts.py::test_competency_contracts_certified |
+| FR-003 | `CONN-TECHNITIUM-DNS-MCP-CONNECTOR-CONTENT-R004` | plan.md Production caller chain | T-004 | tests/test_ontology_extends_core.py::test_pack_declares_no_core_term |
