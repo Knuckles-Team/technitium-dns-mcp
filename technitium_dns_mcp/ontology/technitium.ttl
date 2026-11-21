@@ -3,6 +3,7 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix dc: <http://purl.org/dc/terms/> .
 @prefix : <https://knuckles-team.github.io/ontology/connector/technitium-dns#> .
+@prefix infra: <https://knuckles-team.github.io/ontology/infrastructure#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -13,16 +14,6 @@
 # tool surface (technitium_dns_list_zones, technitium_dns_get_records, technitium_dns_get_stats, ...).
 
 # --- classes (owl:Class) ---
-
-:DnsZone a owl:Class ;
-    rdfs:subClassOf core:ResourceGroup ;
-    rdfs:label "DNS Zone" ;
-    rdfs:comment "An authoritative DNS zone hosted on a Technitium server (Primary, Secondary, Stub, Forwarder, or Catalog), listed by technitium_dns_list_zones." .
-
-:DnsRecord a owl:Class ;
-    rdfs:subClassOf core:ConfigurationItem ;
-    rdfs:label "DNS Record" ;
-    rdfs:comment "A resource record within a zone (A, AAAA, CNAME, TXT, MX, SRV, NS, CAA, PTR, SOA, …) with a name, type, TTL, and record data (technitium_dns_get_records)." .
 
 :DnssecKey a owl:Class ;
     rdfs:label "DNSSEC Key" ;
@@ -64,25 +55,25 @@
 :hostedOnNode a owl:ObjectProperty ;
     rdfs:label "hosted on node" ;
     rdfs:comment "Links a DnsZone to the DnsServerNode that serves it authoritatively." ;
-    rdfs:domain :DnsZone ;
+    rdfs:domain infra:DnsZone ;
     rdfs:range :DnsServerNode .
 
 :recordInZone a owl:ObjectProperty ;
     rdfs:label "record in zone" ;
     rdfs:comment "Links a DnsRecord to the DnsZone it belongs to." ;
-    rdfs:domain :DnsRecord ;
-    rdfs:range :DnsZone .
+    rdfs:domain infra:DnsRecord ;
+    rdfs:range infra:DnsZone .
 
 :signsZone a owl:ObjectProperty ;
     rdfs:label "signs zone" ;
     rdfs:comment "Links a DnssecKey to the DnsZone it signs." ;
     rdfs:domain :DnssecKey ;
-    rdfs:range :DnsZone .
+    rdfs:range infra:DnsZone .
 
 :managedBy a owl:ObjectProperty ;
     rdfs:label "managed by" ;
     rdfs:comment "Links a DNS resource to the Person/Agent responsible for it." ;
-    rdfs:domain :DnsZone ;
+    rdfs:domain infra:DnsZone ;
     rdfs:range core:Person .
 
 # --- fields (owl:DatatypeProperty) ---
@@ -95,13 +86,13 @@
 :zoneType a owl:DatatypeProperty ;
     rdfs:label "zone type" ;
     rdfs:comment "Technitium zone type: Primary, Secondary, Stub, Forwarder, SecondaryForwarder, Catalog, or SecondaryCatalog." ;
-    rdfs:domain :DnsZone ;
+    rdfs:domain infra:DnsZone ;
     rdfs:range xsd:string .
 
 :dnssecStatus a owl:DatatypeProperty ;
     rdfs:label "dnssec status" ;
     rdfs:comment "DNSSEC state of a zone: Unsigned, SignedWithNSEC, or SignedWithNSEC3." ;
-    rdfs:domain :DnsZone ;
+    rdfs:domain infra:DnsZone ;
     rdfs:range xsd:string .
 
 :disabled a owl:DatatypeProperty ;
@@ -112,31 +103,25 @@
 :name a owl:DatatypeProperty ;
     rdfs:label "name" ;
     rdfs:comment "The owner name of a DNS record." ;
-    rdfs:domain :DnsRecord ;
+    rdfs:domain infra:DnsRecord ;
     rdfs:range xsd:string .
 
 :address a owl:DatatypeProperty ;
     rdfs:label "address" ;
     rdfs:comment "The IP address held by an address (A or AAAA) record." ;
-    rdfs:domain :DnsRecord ;
-    rdfs:range xsd:string .
-
-:recordType a owl:DatatypeProperty ;
-    rdfs:label "record type" ;
-    rdfs:comment "DNS record type (A, AAAA, CNAME, TXT, MX, SRV, NS, CAA, PTR, SOA, …)." ;
-    rdfs:domain :DnsRecord ;
+    rdfs:domain infra:DnsRecord ;
     rdfs:range xsd:string .
 
 :recordData a owl:DatatypeProperty ;
     rdfs:label "record data" ;
     rdfs:comment "The record's data payload (rData), rendered as text (e.g. an IP address, target name, or TXT value)." ;
-    rdfs:domain :DnsRecord ;
+    rdfs:domain infra:DnsRecord ;
     rdfs:range xsd:string .
 
 :ttl a owl:DatatypeProperty ;
     rdfs:label "ttl" ;
     rdfs:comment "Time-to-live of a DNS record in seconds." ;
-    rdfs:domain :DnsRecord ;
+    rdfs:domain infra:DnsRecord ;
     rdfs:range xsd:integer .
 
 :keyType a owl:DatatypeProperty ;
