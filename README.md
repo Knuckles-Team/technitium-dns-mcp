@@ -1,15 +1,38 @@
 # Technitium DNS MCP Server & Agent
+## MCP
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)](pyproject.toml)
+![PyPI - Version](https://img.shields.io/pypi/v/technitium-dns-mcp)
+![MCP Server](https://badge.mcpx.dev?type=server 'MCP Server')
+![PyPI - Downloads](https://img.shields.io/pypi/dd/technitium-dns-mcp)
+![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/technitium-dns-mcp)
+![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/technitium-dns-mcp)
+![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/technitium-dns-mcp)
+![PyPI - License](https://img.shields.io/pypi/l/technitium-dns-mcp)
+![GitHub](https://img.shields.io/github/license/Knuckles-Team/technitium-dns-mcp)
+![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/technitium-dns-mcp)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/technitium-dns-mcp)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/technitium-dns-mcp)
+![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/technitium-dns-mcp)
+![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/technitium-dns-mcp)
+![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/technitium-dns-mcp)
+![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/technitium-dns-mcp)
+![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/technitium-dns-mcp)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/technitium-dns-mcp)
+![PyPI - Implementation](https://img.shields.io/pypi/implementation/technitium-dns-mcp)
 
-> **Documentation** — Installation, deployment, usage across the API, CLI, and MCP
-> interfaces, and guidance for provisioning the Technitium DNS Server are maintained
-> in the [official documentation](https://knuckles-team.github.io/technitium-dns-mcp/).
+> **Documentation** — Installation, deployment, and usage across the API, CLI, MCP,
+> and A2A agent interfaces are maintained in the
+> [official documentation](https://knuckles-team.github.io/technitium-dns-mcp/).
 
 ---
 
-## 🚀 Key Features
+## Overview
+
+Technitium DNS Server MCP Server and Agent for Agentic AI!
+
+---
+
+## Key Features
 
 - **100% API Coverage**: Complete mapping of Technitium User/SSO, Dashboard Analytics, Zone Management, DNSSEC, and Record Actions.
 - **FastMCP Protocol Integration**: Dynamically registers stdio and streamable-http endpoints for large-scale AI tool discovery.
@@ -17,7 +40,134 @@
 
 ---
 
-## 🛠️ Installation & Setup
+## MCP
+
+### Dynamic Tool Selection & Visibility
+
+This MCP server supports dynamic toolset selection and visibility filtering at runtime. This allows the operator to restrict the set of exposed tools to prevent blowing up the LLM's context window.
+
+The operator can configure tool filtering via multiple input channels:
+
+- **CLI Arguments:** Pass `--tools` or `--toolsets` (or their disabled counterparts `--disabled-tools` and `--disabled-toolsets`) during startup.
+- **Environment Variables:** Define standard environment variables:
+  - `MCP_ENABLED_TOOLS` / `MCP_DISABLED_TOOLS`
+  - `MCP_ENABLED_TAGS` / `MCP_DISABLED_TAGS`
+- **HTTP SSE Request Headers:** Pass custom headers during transport initialization:
+  - `x-mcp-enabled-tools` / `x-mcp-disabled-tools`
+  - `x-mcp-enabled-tags` / `x-mcp-disabled-tags`
+- **HTTP SSE Request Query Parameters:** Append query parameters directly to the operator's transport connection URL:
+  - `?tools=tool1,tool2`
+  - `?tags=tag1`
+
+When query strings or parameters are provided, an LLM-free **Knowledge Graph resolution layer** (using `DynamicToolOrchestrator`) matches query intents against known tool tags, names, or descriptions, with safe fallback and automated 24-hour background cache refreshing.
+
+### Available MCP Tools
+
+<!-- MCP-TOOLS-TABLE:START -->
+
+#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed`)
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `technitium_dns_dashboard` | `DASHBOARDTOOL` | Query Technitium DNS metrics, prometheus stats, category details, or delete statistics. |
+| `technitium_dns_user` | `USERTOOL` | Manage Technitium DNS user sessions, authentication, credentials, and profile settings. |
+| `technitium_dns_zones` | `ZONESTOOL` | Manage Technitium DNS authoritative zones, DNSSEC properties/keys, and perform DNS record CRUD. |
+| `technitium_ingest_zones` | `INGESTTOOL` | Natively ingest Technitium DNS zones (+ their records) into medulla. |
+
+#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
+
+<details>
+<summary>52 per-operation tools — one per public API method (click to expand)</summary>
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `technitium_dns_add_private_key` | `ZONESTOOL` | Adds a private DNSSEC key to the zone. |
+| `technitium_dns_add_record` | `ZONESTOOL` | Adds a new DNS record. |
+| `technitium_dns_change_password` | `USERTOOL` | Changes password for the current user session. |
+| `technitium_dns_check_for_update` | `USERTOOL` | Checks for software updates. |
+| `technitium_dns_clone_zone` | `ZONESTOOL` | Clones a zone from an existing local zone. |
+| `technitium_dns_convert_to_nsec` | `ZONESTOOL` | Converts proof of non-existence to NSEC. |
+| `technitium_dns_convert_to_nsec3` | `ZONESTOOL` | Converts proof of non-existence to NSEC3. |
+| `technitium_dns_convert_zone_type` | `ZONESTOOL` | Converts zone type. |
+| `technitium_dns_create_single_use_token` | `USERTOOL` | Creates a single-use token; its value is omitted from the result. |
+| `technitium_dns_create_token` | `USERTOOL` | Creates an API token; the token value is omitted from the result. |
+| `technitium_dns_create_zone` | `ZONESTOOL` | Creates a new zone. |
+| `technitium_dns_delete_all_stats` | `DASHBOARDTOOL` | Deletes all statistics from the server. |
+| `technitium_dns_delete_private_key` | `ZONESTOOL` | Deletes a private DNSSEC key. |
+| `technitium_dns_delete_record` | `ZONESTOOL` | Deletes matching DNS record(s). |
+| `technitium_dns_delete_user_session` | `USERTOOL` | Deletes a specific user session token. |
+| `technitium_dns_delete_zone` | `ZONESTOOL` | Deletes authoritative zone. |
+| `technitium_dns_disable_2fa` | `USERTOOL` | Disables 2FA for the current user. |
+| `technitium_dns_disable_zone` | `ZONESTOOL` | Disables authoritative zone. |
+| `technitium_dns_enable_2fa` | `USERTOOL` | Enables 2FA with the provided TOTP code. |
+| `technitium_dns_enable_zone` | `ZONESTOOL` | Enables authoritative zone. |
+| `technitium_dns_export_zone` | `ZONESTOOL` | Exports authoritative zone file. |
+| `technitium_dns_get_dnssec_properties` | `ZONESTOOL` | Retrieves DNSSEC properties/keys for a zone. |
+| `technitium_dns_get_ds_info` | `ZONESTOOL` | Retrieves DNSSEC Delegation Signer (DS) records information. |
+| `technitium_dns_get_metrics_json` | `DASHBOARDTOOL` | Gets metrics in JSON format for the dashboard. |
+| `technitium_dns_get_metrics_text` | `DASHBOARDTOOL` | Gets metrics in Prometheus metrics format. |
+| `technitium_dns_get_records` | `ZONESTOOL` | Retrieves DNS records matching the domain. |
+| `technitium_dns_get_session_info` | `USERTOOL` | Gets info about the current session. |
+| `technitium_dns_get_sso_status` | `USERTOOL` | Gets SSO status of the server. |
+| `technitium_dns_get_stats` | `DASHBOARDTOOL` | Retrieves server statistical charts data. |
+| `technitium_dns_get_top_stats` | `DASHBOARDTOOL` | Retrieves top stats data for queries, clients, domains, etc. |
+| `technitium_dns_get_user_profile_details` | `USERTOOL` | Retrieves user profile details. |
+| `technitium_dns_get_zone_options` | `ZONESTOOL` | Gets settings/options of a zone. |
+| `technitium_dns_get_zone_permissions` | `ZONESTOOL` | Gets user/group permissions of a zone. |
+| `technitium_dns_import_zone` | `ZONESTOOL` | Imports zone content from a zone file. |
+| `technitium_dns_initialize_2fa` | `USERTOOL` | Initializes 2FA; enroll through the DNS console to retrieve the secret. |
+| `technitium_dns_list_catalog_zones` | `ZONESTOOL` | Lists all catalog zones. |
+| `technitium_dns_list_zones` | `ZONESTOOL` | Lists authoritative zones. |
+| `technitium_dns_login` | `USERTOOL` | Log in to the DNS server; credential values are omitted from the result. |
+| `technitium_dns_logout` | `USERTOOL` | Logs out the current session. |
+| `technitium_dns_publish_all_private_keys` | `ZONESTOOL` | Publishes all private DNSSEC keys. |
+| `technitium_dns_resync_zone` | `ZONESTOOL` | Forces authoritative secondary zone resynchronization. |
+| `technitium_dns_retire_dnskey` | `ZONESTOOL` | Retires the DNSKEY. |
+| `technitium_dns_rollover_dnskey` | `ZONESTOOL` | Rolls over the DNSKEY. |
+| `technitium_dns_set_user_profile_details` | `USERTOOL` | Updates user profile settings. |
+| `technitium_dns_set_zone_options` | `ZONESTOOL` | Sets settings/options for a zone. |
+| `technitium_dns_set_zone_permissions` | `ZONESTOOL` | Sets permissions for a zone. |
+| `technitium_dns_sign_zone` | `ZONESTOOL` | Signs the zone with DNSSEC. |
+| `technitium_dns_unsign_zone` | `ZONESTOOL` | Unsigns/removes DNSSEC from a zone. |
+| `technitium_dns_update_dnskey_ttl` | `ZONESTOOL` | Updates DNSKEY TTL. |
+| `technitium_dns_update_nsec3_params` | `ZONESTOOL` | Updates NSEC3 parameters. |
+| `technitium_dns_update_private_key` | `ZONESTOOL` | Updates private key parameters. |
+| `technitium_dns_update_record` | `ZONESTOOL` | Updates an existing DNS record. |
+
+</details>
+
+_4 action-routed tool(s) · 52 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (**`intent` default** — the six verb-tools, granular set loaded on demand · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
+<!-- MCP-TOOLS-TABLE:END -->
+
+---
+
+## Running the Servers
+
+### Run MCP Server (stdio by default)
+
+```bash
+technitium-dns-mcp
+```
+
+Or start a streamable HTTP server:
+
+```bash
+TRANSPORT=streamable-http HOST=0.0.0.0 PORT=8000 technitium-dns-mcp
+```
+
+---
+
+## Running Tests
+
+Ensure high reliability across all components with standard test suites:
+
+```bash
+pytest -v tests/
+```
+
+---
+
+## Installation
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `technitium-dns-mcp[mcp]` to add
 > FastMCP / FastAPI through `scion-sdk`; the required Scion SDK core
@@ -148,49 +298,6 @@ Each action-routed tool can be disabled individually via its toggle env var (set
 `DASHBOARDTOOL`, `USERTOOL`, `ZONESTOOL` — see the
 [Available MCP Tools](#available-mcp-tools) table below.
 
-## ⚙️ Dynamic Tool Selection & Visibility
-
-This MCP server supports dynamic toolset selection and visibility filtering at runtime. This allows the operator to restrict the set of exposed tools to prevent blowing up the LLM's context window.
-
-The operator can configure tool filtering via multiple input channels:
-
-- **CLI Arguments:** Pass `--tools` or `--toolsets` (or their disabled counterparts `--disabled-tools` and `--disabled-toolsets`) during startup.
-- **Environment Variables:** Define standard environment variables:
-  - `MCP_ENABLED_TOOLS` / `MCP_DISABLED_TOOLS`
-  - `MCP_ENABLED_TAGS` / `MCP_DISABLED_TAGS`
-- **HTTP SSE Request Headers:** Pass custom headers during transport initialization:
-  - `x-mcp-enabled-tools` / `x-mcp-disabled-tools`
-  - `x-mcp-enabled-tags` / `x-mcp-disabled-tags`
-- **HTTP SSE Request Query Parameters:** Append query parameters directly to the operator's transport connection URL:
-  - `?tools=tool1,tool2`
-  - `?tags=tag1`
-
-When query strings or parameters are provided, an LLM-free **Knowledge Graph resolution layer** (using `DynamicToolOrchestrator`) matches query intents against known tool tags, names, or descriptions, with safe fallback and automated 24-hour background cache refreshing.
-
----
-
-## 🖥️ Running the Servers
-
-### Run MCP Server (stdio by default)
-
-```bash
-technitium-dns-mcp
-```
-
-Or start a streamable HTTP server:
-
-```bash
-TRANSPORT=streamable-http HOST=0.0.0.0 PORT=8000 technitium-dns-mcp
-```
-
-## 🧪 Running Tests
-
-Ensure high reliability across all components with standard test suites:
-
-```bash
-pytest -v tests/
-```
-
 ---
 
 ## Documentation
@@ -224,6 +331,25 @@ the detailed transport contract.
   `MCP_ALLOWED_HOSTS` in `AgentConfig`.
 <!-- END GENERATED: additional-deployment-options -->
 
+---
+
+## Repository Owners
+
+<img width="100%" height="180em" src="https://github-readme-stats.vercel.app/api?username=example&show_icons=true&hide_border=true&&count_private=true&include_all_commits=true" />
+
+![GitHub followers](https://img.shields.io/github/followers/example)
+![GitHub User's stars](https://img.shields.io/github/stars/example)
+
+---
+
+## Contribute
+
+Contributions are welcome! Please ensure code quality by running local checks before submitting pull requests:
+- Format code using `ruff format .`
+- Lint code using `ruff check .`
+- Validate type-safety with `mypy .`
+- Run test suites using `pytest`
+
 <!-- BEGIN scion-sdk-deployment (generated; do not edit between markers) -->
 
 ## Deploy with `scion-sdk-deployment`
@@ -244,84 +370,6 @@ environment-specific endpoint. Supply those at runtime through `AgentConfig` and
 configured secret provider.
 
 <!-- END scion-sdk-deployment -->
-
-## Available MCP Tools
-
-<!-- MCP-TOOLS-TABLE:START -->
-
-#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed`)
-
-| MCP Tool | Toggle Env Var | Description |
-|----------|----------------|-------------|
-| `technitium_dns_dashboard` | `DASHBOARDTOOL` | Query Technitium DNS metrics, prometheus stats, category details, or delete statistics. |
-| `technitium_dns_user` | `USERTOOL` | Manage Technitium DNS user sessions, authentication, credentials, and profile settings. |
-| `technitium_dns_zones` | `ZONESTOOL` | Manage Technitium DNS authoritative zones, DNSSEC properties/keys, and perform DNS record CRUD. |
-| `technitium_ingest_zones` | `INGESTTOOL` | Natively ingest Technitium DNS zones (+ their records) into medulla. |
-
-#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
-
-<details>
-<summary>52 per-operation tools — one per public API method (click to expand)</summary>
-
-| MCP Tool | Toggle Env Var | Description |
-|----------|----------------|-------------|
-| `technitium_dns_add_private_key` | `ZONESTOOL` | Adds a private DNSSEC key to the zone. |
-| `technitium_dns_add_record` | `ZONESTOOL` | Adds a new DNS record. |
-| `technitium_dns_change_password` | `USERTOOL` | Changes password for the current user session. |
-| `technitium_dns_check_for_update` | `USERTOOL` | Checks for software updates. |
-| `technitium_dns_clone_zone` | `ZONESTOOL` | Clones a zone from an existing local zone. |
-| `technitium_dns_convert_to_nsec` | `ZONESTOOL` | Converts proof of non-existence to NSEC. |
-| `technitium_dns_convert_to_nsec3` | `ZONESTOOL` | Converts proof of non-existence to NSEC3. |
-| `technitium_dns_convert_zone_type` | `ZONESTOOL` | Converts zone type. |
-| `technitium_dns_create_single_use_token` | `USERTOOL` | Creates a single-use token; its value is omitted from the result. |
-| `technitium_dns_create_token` | `USERTOOL` | Creates an API token; the token value is omitted from the result. |
-| `technitium_dns_create_zone` | `ZONESTOOL` | Creates a new zone. |
-| `technitium_dns_delete_all_stats` | `DASHBOARDTOOL` | Deletes all statistics from the server. |
-| `technitium_dns_delete_private_key` | `ZONESTOOL` | Deletes a private DNSSEC key. |
-| `technitium_dns_delete_record` | `ZONESTOOL` | Deletes matching DNS record(s). |
-| `technitium_dns_delete_user_session` | `USERTOOL` | Deletes a specific user session token. |
-| `technitium_dns_delete_zone` | `ZONESTOOL` | Deletes authoritative zone. |
-| `technitium_dns_disable_2fa` | `USERTOOL` | Disables 2FA for the current user. |
-| `technitium_dns_disable_zone` | `ZONESTOOL` | Disables authoritative zone. |
-| `technitium_dns_enable_2fa` | `USERTOOL` | Enables 2FA with the provided TOTP code. |
-| `technitium_dns_enable_zone` | `ZONESTOOL` | Enables authoritative zone. |
-| `technitium_dns_export_zone` | `ZONESTOOL` | Exports authoritative zone file. |
-| `technitium_dns_get_dnssec_properties` | `ZONESTOOL` | Retrieves DNSSEC properties/keys for a zone. |
-| `technitium_dns_get_ds_info` | `ZONESTOOL` | Retrieves DNSSEC Delegation Signer (DS) records information. |
-| `technitium_dns_get_metrics_json` | `DASHBOARDTOOL` | Gets metrics in JSON format for the dashboard. |
-| `technitium_dns_get_metrics_text` | `DASHBOARDTOOL` | Gets metrics in Prometheus metrics format. |
-| `technitium_dns_get_records` | `ZONESTOOL` | Retrieves DNS records matching the domain. |
-| `technitium_dns_get_session_info` | `USERTOOL` | Gets info about the current session. |
-| `technitium_dns_get_sso_status` | `USERTOOL` | Gets SSO status of the server. |
-| `technitium_dns_get_stats` | `DASHBOARDTOOL` | Retrieves server statistical charts data. |
-| `technitium_dns_get_top_stats` | `DASHBOARDTOOL` | Retrieves top stats data for queries, clients, domains, etc. |
-| `technitium_dns_get_user_profile_details` | `USERTOOL` | Retrieves user profile details. |
-| `technitium_dns_get_zone_options` | `ZONESTOOL` | Gets settings/options of a zone. |
-| `technitium_dns_get_zone_permissions` | `ZONESTOOL` | Gets user/group permissions of a zone. |
-| `technitium_dns_import_zone` | `ZONESTOOL` | Imports zone content from a zone file. |
-| `technitium_dns_initialize_2fa` | `USERTOOL` | Initializes 2FA; enroll through the DNS console to retrieve the secret. |
-| `technitium_dns_list_catalog_zones` | `ZONESTOOL` | Lists all catalog zones. |
-| `technitium_dns_list_zones` | `ZONESTOOL` | Lists authoritative zones. |
-| `technitium_dns_login` | `USERTOOL` | Log in to the DNS server; credential values are omitted from the result. |
-| `technitium_dns_logout` | `USERTOOL` | Logs out the current session. |
-| `technitium_dns_publish_all_private_keys` | `ZONESTOOL` | Publishes all private DNSSEC keys. |
-| `technitium_dns_resync_zone` | `ZONESTOOL` | Forces authoritative secondary zone resynchronization. |
-| `technitium_dns_retire_dnskey` | `ZONESTOOL` | Retires the DNSKEY. |
-| `technitium_dns_rollover_dnskey` | `ZONESTOOL` | Rolls over the DNSKEY. |
-| `technitium_dns_set_user_profile_details` | `USERTOOL` | Updates user profile settings. |
-| `technitium_dns_set_zone_options` | `ZONESTOOL` | Sets settings/options for a zone. |
-| `technitium_dns_set_zone_permissions` | `ZONESTOOL` | Sets permissions for a zone. |
-| `technitium_dns_sign_zone` | `ZONESTOOL` | Signs the zone with DNSSEC. |
-| `technitium_dns_unsign_zone` | `ZONESTOOL` | Unsigns/removes DNSSEC from a zone. |
-| `technitium_dns_update_dnskey_ttl` | `ZONESTOOL` | Updates DNSKEY TTL. |
-| `technitium_dns_update_nsec3_params` | `ZONESTOOL` | Updates NSEC3 parameters. |
-| `technitium_dns_update_private_key` | `ZONESTOOL` | Updates private key parameters. |
-| `technitium_dns_update_record` | `ZONESTOOL` | Updates an existing DNS record. |
-
-</details>
-
-_4 action-routed tool(s) · 52 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (**`intent` default** — the six verb-tools, granular set loaded on demand · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
-<!-- MCP-TOOLS-TABLE:END -->
 
 <!-- GOVERNED-CAPABILITY:START -->
 ## Governed capability contract
